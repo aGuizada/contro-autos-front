@@ -31,8 +31,14 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+           "styles": [
+  "src/theme/variables.scss",
+  "src/global.scss",
+  "node_modules/bootstrap/dist/css/bootstrap.min.css"
+],
+ 
+            "scripts": [ "node_modules/@popperjs/core/dist/umd/popper.min.js",
+            "node_modules/bootstrap/dist/js/bootstrap.min.js"]
           },
           "configurations": {
             "production": {
@@ -44,8 +50,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "10kb",
+    "maximumError": "20kb"
                 }
               ],
               "fileReplacements": [
@@ -111,7 +117,11 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+          "styles": [
+  "src/theme/variables.scss",
+  "src/global.scss",
+  "node_modules/bootstrap/dist/css/bootstrap.min.css"
+],  
             "scripts": []
           },
           "configurations": {
@@ -136,7 +146,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": "1670632c-6ea9-44d0-92ee-5673a134f79e"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

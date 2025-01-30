@@ -1,0 +1,36 @@
+<h1 class="text-center mb-4">Comunidades</h1>
+
+<!-- Lista de comunidades -->
+<div class="list-group mb-4">
+  <div *ngFor="let comunidad of comunidades" class="list-group-item d-flex justify-content-between align-items-center">
+    <span>{{ comunidad.nombre }}</span>
+    <div>
+      <button class="btn btn-warning btn-sm me-2" (click)="editarComunidad(comunidad.id)">Editar</button>
+      <button class="btn btn-danger btn-sm" (click)="eliminarComunidad(comunidad.id)">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Formulario para crear o editar comunidad -->
+<div class="card">
+  <div class="card-header">
+    <h4>{{ editMode ? 'Editar Comunidad' : 'Crear Comunidad' }}</h4>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="comunidadForm" (ngSubmit)="guardarComunidad()">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre de la Comunidad</label>
+        <input 
+          id="nombre" 
+          formControlName="nombre" 
+          class="form-control" 
+          placeholder="Ingresa el nombre de la comunidad" 
+          required
+        >
+      </div>
+      <button type="submit" class="btn btn-primary w-100">
+        {{ editMode ? 'Actualizar' : 'Crear' }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,17 +1,44 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
-</ion-content>
+    <!-- Cabecera del perfil -->
+    <div class="profile-header text-center">
+        <div class="container">
+            <img src="/api/placeholder/100/100" alt="Foto de perfil" class="rounded-circle mb-3" style="border: 3px solid white;">
+            <h4 class="mb-1">Ana Martínez</h4>
+            <p class="mb-2"></p>
+            <div class="d-flex justify-content-center gap-3 mb-3">
+                <button class="btn btn-light action-button">Editar Perfil</button>
+                <button class="btn btn-outline-light action-button">Compartir</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Navegación -->
+  
+        <!-- Información Personal -->
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Información Personal</h6>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Email</small>
+                    <p class="mb-2"></p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Teléfono</small>
+                    <p class="mb-2">+34 612 345 678</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Ubicación</small>
+                    <p class="mb-2">Barcelona, España</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Ocupación</small>
+                    <p class="mb-0">Diseñadora UX/UI</p>
+                </div>
+            </div>
+        </div>
+
+       
+  
