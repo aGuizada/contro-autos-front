@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';  // Importa ReactiveFormsModule
 import { QRCodeComponent } from 'angularx-qrcode';  // Importa QRCodeComponent
-
+import { ZXingScannerModule } from '@zxing/ngx-scanner'; 
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -19,6 +19,7 @@ import { QRCodeComponent } from 'angularx-qrcode';  // Importa QRCodeComponent
     FormsModule,
     ReactiveFormsModule,
     QRCodeComponent ,
+    ZXingScannerModule, 
   
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],

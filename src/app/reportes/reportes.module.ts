@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ReportesPageRoutingModule } from './reportes-routing.module';
-
+import { ReactiveFormsModule } from '@angular/forms'; 
 import { ReportesPage } from './reportes.page';
 
 @NgModule({
@@ -13,6 +13,7 @@ import { ReportesPage } from './reportes.page';
     CommonModule,
     FormsModule,
     IonicModule,
+    ReactiveFormsModule ,
     ReportesPageRoutingModule,
     ReportesPage
   ],

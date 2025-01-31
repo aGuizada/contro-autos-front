@@ -14,6 +14,15 @@ interface Usuario {
   rol_id: number;
   comunidad_id: number;
   qrData?: string;
+  auto?: Auto;
+}
+
+interface Auto {
+  id?: number;
+  marca: string;
+  modelo: string;
+  placa: string;
+  usuario_id?: number;
 }
 
 @Component({
@@ -25,6 +34,7 @@ interface Usuario {
 })
 export class CrearUsuariosPage implements OnInit {
   usuarioForm!: FormGroup;
+  autoForm!: FormGroup;
   roles: any[] = [];
   comunidades: any[] = [];
   usuarios: Usuario[] = [];
@@ -32,7 +42,6 @@ export class CrearUsuariosPage implements OnInit {
   usuarioIdEditando: number | null = null;
   mostrarModal: boolean = false;
   usuarioSeleccionado: Usuario | null = null;
-  // Paginación
   paginaActual: number = 1;
   itemsPorPagina: number = 5;
   totalPaginas: number = 0;

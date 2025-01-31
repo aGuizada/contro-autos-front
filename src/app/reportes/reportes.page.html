@@ -1,1 +1,90 @@
-<h1>reporte</h1>
+<div class="container mt-4">
+    <h2 class="text-center">Gestión de Autos</h2>
+  
+    <!-- Formulario para Crear o Editar Auto -->
+    <div class="card p-3 mb-4">
+      <h4>{{ autoSeleccionado ? 'Editar Auto' : 'Crear Nuevo Auto' }}</h4>
+      <form [formGroup]="autoForm" (ngSubmit)="autoSeleccionado ? actualizarAuto() : crearAuto()">
+        <div class="mb-3">
+          <label class="form-label">Número de Chasis</label>
+          <input type="text" class="form-control" formControlName="numero_chasis">
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Marca</label>
+          <input type="text" class="form-control" formControlName="marca">
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Modelo</label>
+          <input type="text" class="form-control" formControlName="modelo">
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Imagen</label>
+          <input type="file" class="form-control" (change)="seleccionarImagen($event)">
+        </div>
+  
+        <div class="mb-3">
+          <label class="form-label">Usuario</label>
+          <select class="form-control" formControlName="usuario_id">
+            <option value="" disabled selected>Seleccione un usuario</option>
+            <option *ngFor="let usuario of usuarios" [value]="usuario.id">{{ usuario.nombre }}</option>
+          </select>
+        </div>
+  
+        <button type="submit" class="btn btn-success">{{ autoSeleccionado ? 'Actualizar Auto' : 'Crear Auto' }}</button>
+      </form>
+    </div>
+  
+    <!-- Tabla para Mostrar Autos -->
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Número de Chasis</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Imagen</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let auto of autos">
+            <td>{{ auto.id }}</td>
+            <td>{{ auto.numero_chasis }}</td>
+            <td>{{ auto.marca || 'No especificado' }}</td>
+            <td>{{ auto.modelo || 'No especificado' }}</td>
+            <td>
+              <img *ngIf="auto.imagen" [src]="'/storage/' + auto.imagen" class="img-thumbnail" width="80">
+              <span *ngIf="!auto.imagen">Sin imagen</span>
+            </td>
+            <td>{{ auto.usuario.nombre || 'No especificado' }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="verAuto(auto.id)">Ver</button>
+              <button class="btn btn-warning btn-sm" (click)="editarAuto(auto)">Editar</button>
+              <button class="btn btn-danger btn-sm" (click)="eliminarAuto(auto.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Detalles del Auto Seleccionado -->
+    <div class="card mt-4" *ngIf="autoSeleccionado">
+      <img [src]="'/storage/' + autoSeleccionado.imagen" class="card-img-top">
+      <div class="card-body">
+        <h5 class="card-title">Detalles del Auto</h5>
+        <p class="card-text">
+          <strong>ID:</strong> {{ autoSeleccionado.id }}<br>
+          <strong>Número de Chasis:</strong> {{ autoSeleccionado.numero_chasis }}<br>
+          <strong>Marca:</strong> {{ autoSeleccionado.marca || 'No especificado' }}<br>
+          <strong>Modelo:</strong> {{ autoSeleccionado.modelo || 'No especificado' }}<br>
+          <strong>Usuario:</strong> {{ autoSeleccionado.usuario.nombre || 'No especificado' }}
+        </p>
+      </div>
+    </div>
+  </div>
+  
