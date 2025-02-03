@@ -14,6 +14,7 @@ import { QRCodeComponent } from 'angularx-qrcode';
 })
 export class Tab1Page implements OnInit {
   usuarioSeleccionado: any = {
+    id: null,
     nombre: '',
     email: '',
     telefono: '',
@@ -23,25 +24,16 @@ export class Tab1Page implements OnInit {
     qrData: '',
     rol: { nombre: '' },
     comunidad: { nombre: '' },
-    qrHabilitado: true  // Cambiado a true para que el QR se muestre inicialmente
+    qrHabilitado: true
   };
 
-  loading: boolean = false;  // Variable para mostrar un mensaje de carga
+  loading: boolean = false;
 
   constructor(private usuarioService: ServiciosService) {}
 
   ngOnInit() {
-    this.obtenerUsuarioAutenticado(); 
-  
-    const usuarioGuardado = localStorage.getItem(`usuarioQR_${this.usuarioSeleccionado.email}`);
-    if (usuarioGuardado) {
-      this.usuarioSeleccionado = JSON.parse(usuarioGuardado);
-    }
-  
-    // Verificar si el QR de este usuario sigue deshabilitado
-    this.verificarQRHabilitado();
+    this.obtenerUsuarioAutenticado();
   }
-  
 
   obtenerUsuarioAutenticado() {
     this.usuarioService.getUsuarioAutenticado().subscribe(
@@ -49,10 +41,9 @@ export class Tab1Page implements OnInit {
         const emailAutenticado = localStorage.getItem('emailUsuario');
         this.usuarioSeleccionado = data.find(user => user.email === emailAutenticado) || {};
   
-        // Asegúrate de que el ID esté presente
         if (this.usuarioSeleccionado.id) {
           this.usuarioSeleccionado.qrData = this.generateQRData(this.usuarioSeleccionado);
-          this.verificarQRHabilitado(); // Se verifica si ya fue escaneado antes
+          this.verificarQRHabilitado();
         }
       },
       (error) => {
@@ -60,56 +51,50 @@ export class Tab1Page implements OnInit {
       }
     );
   }
-  
 
   generateQRData(usuario: any): string {
     return `Nombre: ${usuario.nombre}
-  Email: ${usuario.email}
-  Rol: ${usuario.rol?.nombre || 'Desconocido'}
-  Comunidad: ${usuario.comunidad?.nombre || 'Desconocida'}
-  Número de Chasis: ${usuario.numero_chasis || 'N/A'}
-  Marca: ${usuario.marca || 'N/A'}
-  Modelo: ${usuario.modelo || 'N/A'}`;
+Email: ${usuario.email}
+Rol: ${usuario.rol?.nombre || 'Desconocido'}
+Comunidad: ${usuario.comunidad?.nombre || 'Desconocida'}
+Número de Chasis: ${usuario.numero_chasis || 'N/A'}
+Marca: ${usuario.marca || 'N/A'}
+Modelo: ${usuario.modelo || 'N/A'}`;
   }
 
-  // Método para marcar el QR como escaneado y actualizar la base de datos
+  // Método para marcar el QR como escaneado y guardar en la base de datos
   marcarQRComoEscaneado() {
-    if (!this.usuarioSeleccionado?.email) return;
-  
-    // Deshabilitamos el QR solo para este usuario
-    this.usuarioSeleccionado.qrHabilitado = false;
-  
-    // Guardamos la fecha de deshabilitación con clave única para cada usuario
-    const fechaHabilitacion = this.obtenerFechaFutura(7);
-    localStorage.setItem(`qrDeshabilitadoHasta_${this.usuarioSeleccionado.email}`, fechaHabilitacion);
-  
-    // También guardamos el usuario actualizado
-    localStorage.setItem(`usuarioQR_${this.usuarioSeleccionado.email}`, JSON.stringify(this.usuarioSeleccionado));
+    if (!this.usuarioSeleccionado?.id) return;
+
+    this.loading = true;
+    
+    this.usuarioService.saveQRScan(this.usuarioSeleccionado.id).subscribe(
+      (response) => {
+        this.usuarioSeleccionado.qrHabilitado = false;
+        this.loading = false;
+        // Opcional: mostrar un mensaje de éxito
+      },
+      (error) => {
+        console.error('Error al marcar QR como escaneado', error);
+        this.loading = false;
+        // Opcional: mostrar un mensaje de error
+      }
+    );
   }
-  
 
   verificarQRHabilitado() {
-    if (!this.usuarioSeleccionado?.email) return;
-  
-    const fechaGuardada = localStorage.getItem(`qrDeshabilitadoHasta_${this.usuarioSeleccionado.email}`);
-  
-    if (fechaGuardada) {
-      const hoy = new Date();
-      const fechaHabilitacion = new Date(fechaGuardada);
-  
-      // Habilitar QR si la fecha de habilitación ya pasó
-      this.usuarioSeleccionado.qrHabilitado = hoy >= fechaHabilitacion;
-    } else {
-      // Si no hay fecha guardada, significa que el QR nunca fue deshabilitado
-      this.usuarioSeleccionado.qrHabilitado = true;
-    }
-  }
-  
+    if (!this.usuarioSeleccionado?.id) return;
 
-  obtenerFechaFutura(dias: number): string {
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() + dias);
-    return fecha.toISOString();
+    this.usuarioService.checkQRStatus(this.usuarioSeleccionado.id).subscribe(
+      (status: any) => {
+        this.usuarioSeleccionado.qrHabilitado = status.qrHabilitado;
+      },
+      (error) => {
+        console.error('Error al verificar estado del QR', error);
+        // Por defecto, asumir que el QR está habilitado si hay un error
+        this.usuarioSeleccionado.qrHabilitado = true;
+      }
+    );
   }
 
   escaneoQR(dataQR: string) {
@@ -117,7 +102,5 @@ export class Tab1Page implements OnInit {
   
     this.usuarioSeleccionado.qrData = dataQR;
     this.usuarioSeleccionado.qrHabilitado = true;
-  
-    localStorage.setItem('usuarioQR', JSON.stringify(this.usuarioSeleccionado));
   }
 }

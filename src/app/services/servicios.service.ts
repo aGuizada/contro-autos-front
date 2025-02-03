@@ -125,10 +125,13 @@ export class ServiciosService {
   }
 
   // Rutas para registros de carga
-  getRegistrosCarga(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/registros-carga`);
-  }
 
+  
+  getRegistrosCarga(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/registros-carga`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
   getRegistroCarga(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/registros-carga/${id}`);
   }
@@ -147,6 +150,25 @@ export class ServiciosService {
   }
   marcarQRComoEscaneado(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/registros-carga/${id}/marcar-qr`, {});
+  }
+  saveQRScan(usuarioId: number): Observable<any> {
+    // Use toLocaleString() or a specific date formatting method
+    const formattedDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+    return this.http.post(`${this.apiUrl}/registros-carga`, {
+      usuario_id: usuarioId,
+      fecha_carga: formattedDate, // MySQL-compatible format
+      qrHabilitado: false
+    }, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
+
+  // Method to check if QR is currently enabled for a user
+  checkQRStatus(usuarioId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/registros-carga/check-qr-status/${usuarioId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
   }
   
 }
