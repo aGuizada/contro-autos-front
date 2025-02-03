@@ -29,21 +29,19 @@ export class Tab2Page implements OnInit {
   cargarHistorialCargas() {
     this.loading = true;
     this.serviciosService.getRegistrosCarga().subscribe(
-      (data) => {
-        // Sort records by date in descending order (most recent first)
-        this.registrosCarga = data.sort((a: any, b: any) => 
-          new Date(b.fecha_carga).getTime() - new Date(a.fecha_carga).getTime()
-        );
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Error al cargar registros de carga', error);
-        this.error = 'No se pudieron cargar los registros de carga';
-        this.loading = false;
-      }
+        (data) => {
+            this.registrosCarga = data.sort((a: any, b: any) =>
+                new Date(b.fecha_carga).getTime() - new Date(a.fecha_carga).getTime()
+            );
+            this.loading = false;
+        },
+        (error) => {
+            console.error('Error al cargar registros de carga', error);
+            this.error = 'No se pudieron cargar los registros de carga';
+            this.loading = false;
+        }
     );
-  }
-
+}
   formatearFecha(fecha: string): string {
     return new Date(fecha).toLocaleString('es-ES', {
       year: 'numeric',

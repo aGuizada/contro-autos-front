@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable, throwError } from 'rxjs'; // Importa throwError
+import { catchError } from 'rxjs/operators'; // Importa catchError
 
-import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,7 +11,12 @@ export class ServiciosService {
 
   private apiUrl = 'http://localhost:8000/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
 
-  constructor(private http: HttpClient) { }
+  constructor(  private http: HttpClient,
+    private router: Router) { }
+
+
+
+
   getUsuarioAutenticado(): Observable<any> {
     return this.http.get(`${this.apiUrl}/usuarios`);
   }
@@ -103,35 +109,35 @@ export class ServiciosService {
     return this.http.delete(`${this.apiUrl}/comunidades/${id}`);
   }
 
-  // Rutas para autos
-  getAutos(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/autos`);
-  }
-
-  getAuto(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/autos/${id}`);
-  }
-
-  crearAuto(auto: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/autos`, auto);
-  }
-
-  actualizarAuto(id: number, auto: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/autos/${id}`, auto);
-  }
-
-  eliminarAuto(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/autos/${id}`);
-  }
-
   // Rutas para registros de carga
 
   
+
   getRegistrosCarga(): Observable<any> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+        // Manejar caso de token no existente
+        return throwError('No se encontró token de autenticación');
+    }
+
     return this.http.get(`${this.apiUrl}/registros-carga`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-  }
+        headers: new HttpHeaders({
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        })
+    }).pipe(
+        catchError(error => {
+            console.error('Error al obtener registros:', error);
+            // Manejar errores de autenticación
+            if (error.status === 401) {
+                // Posiblemente redirigir al login
+                this.router.navigate(['/login']);
+            }
+            return throwError(error);
+        })
+    );
+}
   getRegistroCarga(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/registros-carga/${id}`);
   }
