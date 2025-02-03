@@ -1,1 +1,25 @@
-<h1>hola mundo </h1>
+<ion-header>
+    <ion-toolbar>
+      <ion-title>
+        Dashboard
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <div class="dashboard-container">
+      <h2>Total de Usuarios: {{ totalUsuarios }}</h2>
+  
+      <h3>Usuarios por Comunidad</h3>
+      <div *ngFor="let comunidad of getComunidadKeys()">
+        <p>{{ comunidad }}: {{ usuariosPorComunidad[comunidad] }} usuarios</p>
+      <p>Porcentaje: {{ porcentajesPorComunidad[comunidad].toFixed(2) }}%</p>
+     </div>
+  
+      <h3>Usuarios Detallados</h3>
+      <div *ngFor="let usuario of usuarios">
+        <p><strong>{{ usuario.nombre }}</strong> - Comunidad: {{ usuario.comunidad?.nombre || 'Sin Comunidad' }}</p>
+      </div>
+    </div>
+  </ion-content>
+  

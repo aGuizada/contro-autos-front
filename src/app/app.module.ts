@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';  // Importa ReactiveFormsModule
 import { QRCodeComponent } from 'angularx-qrcode';  // Importa QRCodeComponent
 import { ZXingScannerModule } from '@zxing/ngx-scanner'; 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [

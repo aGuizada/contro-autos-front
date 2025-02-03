@@ -11,8 +11,13 @@ interface Usuario {
   id: number;
   nombre: string;
   email: string;
+  telefono?: string;
   rol_id: number;
   comunidad_id: number;
+  numero_chasis?: string;
+  marca?: string;  // Add these properties
+  modelo?: string;
+  imagen?: string;
   qrData?: string;
   auto?: Auto;
 }
@@ -22,6 +27,7 @@ interface Auto {
   marca: string;
   modelo: string;
   placa: string;
+  numero_chasis?: string;
   usuario_id?: number;
 }
 
@@ -80,8 +86,13 @@ export class CrearUsuariosPage implements OnInit {
       nombre: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+      telefono: [''], // Optional field
       rol_id: ['', [Validators.required]],
-      comunidad_id: ['', [Validators.required]]
+      comunidad_id: ['', [Validators.required]],
+      numero_chasis: [''], // Optional field for auto
+      marca: [''], // Optional field for auto
+      modelo: [''], // Optional field for auto
+      imagen: [''] // Optional field for image
     });
   }
  // Método para abrir el modal con la información detallada del usuario
@@ -131,40 +142,60 @@ cerrarModalUsuario() {
       }
     });
   }
-
   generateQRData(usuario: Usuario): string {
     const comunidad = this.getComunidadNombre(usuario.comunidad_id);
-    return `Nombre: ${usuario.nombre}\nComunidad: ${comunidad}`;
+    const rol = this.getRolNombre(usuario.rol_id);
+    return `Nombre: ${usuario.nombre}
+  Email: ${usuario.email}
+  Teléfono: ${usuario.telefono || 'N/A'}
+  Comunidad: ${comunidad}
+  Rol: ${rol}
+  Número de Chasis: ${usuario.numero_chasis || 'N/A'}
+  Marca: ${usuario.marca || 'N/A'}
+  Modelo: ${usuario.modelo || 'N/A'}`;
   }
 
   crearUsuario() {
     if (this.usuarioForm.valid) {
-      this.serviciosService.crearUsuario(this.usuarioForm.value).subscribe(
+      const usuarioData = {
+        ...this.usuarioForm.value,
+        auto: {
+          numero_chasis: this.usuarioForm.get('numero_chasis')?.value,
+          marca: this.usuarioForm.get('marca')?.value,
+          modelo: this.usuarioForm.get('modelo')?.value
+        }
+      };
+  
+      this.serviciosService.crearUsuario(usuarioData).subscribe(
         (response: Usuario) => {
           const nuevoUsuario = {
             ...response,
             qrData: this.generateQRData(response)
           };
           this.usuarios.push(nuevoUsuario);
-          Swal.fire('Éxito', 'Usuario creado correctamente', 'success');
+          alert('Usuario creado correctamente');
           this.cerrarModal();
           this.cargarUsuarios();
         },
         (error) => {
           console.error('Error:', error);
-          Swal.fire('Error', 'No se pudo crear el usuario', 'error');
+          alert('No se pudo crear el usuario');
         }
       );
     }
   }
-
   editarUsuario(usuario: Usuario) {
     this.usuarioForm.patchValue({
       nombre: usuario.nombre,
       email: usuario.email,
       password: '',
+      telefono: usuario.telefono || '',
       rol_id: usuario.rol_id,
-      comunidad_id: usuario.comunidad_id
+      comunidad_id: usuario.comunidad_id,
+      numero_chasis: usuario.auto?.numero_chasis || '',
+      marca: usuario.auto?.marca || '',
+      modelo: usuario.auto?.modelo || '',
+      imagen: '' // You might want to handle image differently
     });
     this.usuarioIdEditando = usuario.id;
     this.editando = true;
@@ -175,7 +206,7 @@ cerrarModalUsuario() {
     if (this.usuarioIdEditando && this.usuarioForm.valid) {
       this.serviciosService.actualizarUsuario(this.usuarioIdEditando, this.usuarioForm.value).subscribe(
         () => {
-          Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
+          alert('Usuario actualizado correctamente');
           this.cargarUsuarios();
           this.cerrarModal();
           this.editando = false;
@@ -183,28 +214,27 @@ cerrarModalUsuario() {
         },
         (error) => {
           console.error('Error:', error);
-          Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+          alert('No se pudo actualizar el usuario');
         }
       );
     }
   }
 
+
   eliminarUsuario(id: number) {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción no se puede deshacer',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.serviciosService.eliminarUsuario(id).subscribe(() => {
-          Swal.fire('Eliminado', 'Usuario eliminado correctamente', 'success');
+    const confirmacion = confirm('¿Estás seguro de eliminar este usuario?');
+    if (confirmacion) {
+      this.serviciosService.eliminarUsuario(id).subscribe(
+        () => {
+          alert('Usuario eliminado correctamente');
           this.cargarUsuarios();
-        });
-      }
-    });
+        },
+        (error) => {
+          console.error('Error al eliminar:', error);
+          alert('No se pudo eliminar el usuario');
+        }
+      );
+    }
   }
 
   getRolNombre(rolId: number): string {

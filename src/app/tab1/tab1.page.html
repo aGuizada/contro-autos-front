@@ -1,57 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title> Escaneo QR </ion-title>
+  </ion-toolbar>
+</ion-header>
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="qr-container">
-                    <h2 class="text-center mb-4 glow-text">Sistema de Acceso</h2>
-                    
-                    <!-- Estadísticas -->
-                    <div class="row mb-4">
-                        <div class="col-4">
-                            <div class="data-stat">
-                                <h5 class="glow-text">89%</h5>
-                                <small>Señal</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="data-stat">
-                                <h5 class="glow-text">4:59</h5>
-                                <small>Tiempo</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="data-stat">
-                                <h5 class="glow-text">Active</h5>
-                                <small>Estado</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contenedor del QR -->
-                    <div class="hex-container">
-                        <div class="hex"></div>
-                        <div class="hex-inner"></div>
-                        <div class="status-ring"></div>
-                        
-                        <!-- Esquinas -->
-                        <div class="corner corner-tl"></div>
-                        <div class="corner corner-tr"></div>
-                        <div class="corner corner-bl"></div>
-                        <div class="corner corner-br"></div>
-                        
-                        <!-- Scanner -->
-                        <div class="scanner"></div>
-                        
-                        <!-- QR Code -->
-                        <img src="/api/placeholder/200/200" alt="Código QR" class="img-fluid">
-                    </div>
-
-                    <!-- Instrucciones -->
-                    <div class="text-center mt-4">
-                        <p class="mb-2">Escanea el código para acceder al sistema</p>
-                        <small class="text-muted">El código se actualiza automáticamente</small>
-                    </div>
-                </div>
+<ion-content>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="qr-container">
+          <h2 class="text-center mb-4 glow-text">Detalles del Auto</h2>
+          
+          <div *ngIf="usuarioSeleccionado">
+            <div class="row mb-4">
+              <div class="col-12">
+                <p><strong>Número de Chasis:</strong> {{ usuarioSeleccionado.numero_chasis || 'N/A' }}</p>
+                <p><strong>Marca:</strong> {{ usuarioSeleccionado.marca || 'N/A' }}</p>
+                <p><strong>Modelo:</strong> {{ usuarioSeleccionado.modelo || 'N/A' }}</p>
+              </div>
             </div>
+
+            <!-- ✅ Mostrar el código QR solo si está habilitado -->
+            <div class="text-center" *ngIf="usuarioSeleccionado.qrHabilitado">
+              <p><strong>QR Code:</strong></p>
+              <qrcode 
+                [qrdata]="usuarioSeleccionado.qrData" 
+                [width]="256" 
+                [errorCorrectionLevel]="'M'"
+              ></qrcode>
+
+              <button class="btn btn-primary mt-3" (click)="marcarQRComoEscaneado()">
+                Marcar como Escaneado
+              </button>
+            </div>
+
+            <!-- ✅ Mensaje cuando el QR está deshabilitado -->
+            <div class="text-center mt-3 text-danger" *ngIf="!usuarioSeleccionado.qrHabilitado">
+              <p><strong>El código QR está deshabilitado</strong></p>
+              <p>Se activará nuevamente en 7 días.</p>
+            </div>
+
+            <!-- Mensaje de carga mientras se realiza la actualización -->
+            <div *ngIf="loading" class="text-center mt-3">
+              <p>Cargando...</p>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <p class="mb-2">Escanea el código QR</p>
+            <small class="text-muted">El código se actualiza automáticamente</small>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+</ion-content>

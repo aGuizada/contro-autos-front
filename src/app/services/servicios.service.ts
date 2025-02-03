@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
 import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,35 @@ export class ServiciosService {
   private apiUrl = 'http://localhost:8000/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
 
   constructor(private http: HttpClient) { }
+  getUsuarioAutenticado(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/usuarios`);
+  }
+  getUserProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user-profile`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
 
+  // Método para actualizar el perfil del usuario
+  actualizarPerfil(usuario: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/user-profile`, usuario, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
+  
+  
+  login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials);
+  }
+
+  getUserRole(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/role`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
+  
+  
+  
   // Rutas para usuarios
   getUsuarios(): Observable<any> {
     return this.http.get(`${this.apiUrl}/usuarios`);
@@ -107,6 +136,7 @@ export class ServiciosService {
   crearRegistroCarga(registro: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/registros-carga`, registro);
   }
+  
 
   actualizarRegistroCarga(id: number, registro: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/registros-carga/${id}`, registro);
@@ -115,4 +145,8 @@ export class ServiciosService {
   eliminarRegistroCarga(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/registros-carga/${id}`);
   }
+  marcarQRComoEscaneado(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/registros-carga/${id}/marcar-qr`, {});
+  }
+  
 }

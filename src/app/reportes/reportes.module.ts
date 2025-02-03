@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ReportesPageRoutingModule } from './reportes-routing.module';
 import { ReactiveFormsModule } from '@angular/forms'; 
 import { ReportesPage } from './reportes.page';
-
+import { QRCodeComponent } from 'angularx-qrcode';
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +15,7 @@ import { ReportesPage } from './reportes.page';
     IonicModule,
     ReactiveFormsModule ,
     ReportesPageRoutingModule,
+    QRCodeComponent, 
     ReportesPage
   ],
   declarations: []

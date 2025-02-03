@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // //{
-  //   path: '',
-  //   redirectTo: '/login', // Redirige a la página de login al iniciar
-  //   pathMatch: 'full'
-  // },
+  {
+    path: '',
+    redirectTo: '/login', // Redirige a la página de login al iniciar
+    pathMatch: 'full'
+  },
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
