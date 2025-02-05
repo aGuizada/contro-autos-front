@@ -9,11 +9,10 @@ import { Router } from '@angular/router';
 })
 export class ServiciosService {
 
-  private apiUrl = 'http://localhost:8000/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
+  private apiUrl = 'https://prueva.chengroupchina.com/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
 
   constructor(  private http: HttpClient,
     private router: Router) { }
-
 
 
 
@@ -117,8 +116,7 @@ export class ServiciosService {
     const token = localStorage.getItem('token');
     
     if (!token) {
-        // Manejar caso de token no existente
-        return throwError('No se encontró token de autenticación');
+        return throwError(() => new Error('No se encontró token de autenticación'));
     }
 
     return this.http.get(`${this.apiUrl}/registros-carga`, {
@@ -127,14 +125,15 @@ export class ServiciosService {
             'Content-Type': 'application/json'
         })
     }).pipe(
-        catchError(error => {
+        // Opcional: puedes agregar un catchError para manejar errores de autenticación
+        catchError((error: any) => {
             console.error('Error al obtener registros:', error);
-            // Manejar errores de autenticación
+            
             if (error.status === 401) {
-                // Posiblemente redirigir al login
                 this.router.navigate(['/login']);
             }
-            return throwError(error);
+            
+            return throwError(() => error);
         })
     );
 }

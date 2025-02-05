@@ -1,0 +1,42 @@
+/* profile.component.scss */
+.profile-header {
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+    min-height: 200px;
+  }
+  
+  .avatar-container {
+    position: relative;
+    
+    ion-avatar {
+      width: 120px;
+      height: 120px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+  }
+  
+  ion-card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    
+    ion-card-header {
+      border-bottom: 1px solid #eee;
+    }
+  }
+  
+  .list-group-item {
+    border: none;
+    padding: 1rem 0;
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid #eee;
+    }
+    
+    ion-icon {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  }

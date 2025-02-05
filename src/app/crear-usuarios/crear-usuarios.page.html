@@ -1,4 +1,5 @@
 <div class="container mt-4">
+  <!-- Botón para abrir el modal de nuevo usuario -->
   <div class="row mb-4">
     <div class="col-12 text-end">
       <button class="btn btn-primary" (click)="abrirModal()">
@@ -7,7 +8,7 @@
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal para crear/editar usuario -->
   <div class="modal" [class.show]="mostrarModal" [class.d-block]="mostrarModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -18,11 +19,13 @@
         <div class="modal-body">
           <form [formGroup]="usuarioForm">
             <div class="row">
+              <!-- Campo Nombre -->
               <div class="col-md-6 mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
                 <input type="text" id="nombre" formControlName="nombre" class="form-control" required />
               </div>
 
+              <!-- Campo Email -->
               <div class="col-md-6 mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" id="email" formControlName="email" class="form-control" required />
@@ -30,15 +33,18 @@
             </div>
 
             <div class="row">
+              <!-- Campo Contraseña -->
               <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" id="password" formControlName="password" class="form-control" [attr.required]="!editando ? true : null" />
               </div>
 
-             
+              <!-- Campo Teléfono -->
+              
             </div>
 
             <div class="row">
+              <!-- Campo Rol -->
               <div class="col-md-6 mb-3">
                 <label for="rol" class="form-label">Rol</label>
                 <select formControlName="rol_id" id="rol" class="form-select" required>
@@ -47,6 +53,7 @@
                 </select>
               </div>
 
+              <!-- Campo Comunidad -->
               <div class="col-md-6 mb-3">
                 <label for="comunidad" class="form-label">Comunidad</label>
                 <select formControlName="comunidad_id" id="comunidad" class="form-select" required>
@@ -59,23 +66,24 @@
             </div>
 
             <div class="row">
+              <!-- Campo Número de Chasis -->
               <div class="col-md-4 mb-3">
                 <label for="numero_chasis" class="form-label">Número de Chasis</label>
                 <input type="text" id="numero_chasis" formControlName="numero_chasis" class="form-control" />
               </div>
 
+              <!-- Campo Marca -->
               <div class="col-md-4 mb-3">
                 <label for="marca" class="form-label">Marca</label>
                 <input type="text" id="marca" formControlName="marca" class="form-control" />
               </div>
 
+              <!-- Campo Modelo -->
               <div class="col-md-4 mb-3">
                 <label for="modelo" class="form-label">Modelo</label>
                 <input type="text" id="modelo" formControlName="modelo" class="form-control" />
               </div>
             </div>
-
-            
           </form>
         </div>
         <div class="modal-footer">
@@ -89,6 +97,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal para ver detalles del usuario -->
   <div class="modal" [class.show]="usuarioSeleccionado" [class.d-block]="usuarioSeleccionado" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -123,64 +133,65 @@
       </div>
     </div>
   </div>
-  
-    <div class="row">
-      <div class="col-md-12">
-        <h3>Lista de Usuarios</h3>
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Comunidad</th>
-                <th>Código QR</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let usuario of usuariosPaginados">
-                <td>{{ usuario.nombre }}</td>
-            
-                <td>{{ getComunidadNombre(usuario.comunidad_id) }}</td>
-                <td class="text-center">
-                  <qrcode 
-                    [qrdata]="usuario.qrData!"
-                    [width]="100"
-                    [errorCorrectionLevel]="'M'"
-                  ></qrcode>
-                </td>
-                <td>
-                  <button class="btn btn-warning btn-sm me-2" (click)="editarUsuario(usuario)">Editar</button>
-                  <button class="btn btn-danger btn-sm" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
-                  <!-- Botón Ver -->
-                  <button class="btn btn-info btn-sm" (click)="verUsuario(usuario)">Ver</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+  <!-- Tabla de usuarios -->
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Lista de Usuarios</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Comunidad</th>
+              <th>Código QR</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let usuario of usuariosPaginados">
+              <td>{{ usuario.nombre }}</td>
+              <td>{{ getComunidadNombre(usuario.comunidad_id) }}</td>
+              <td class="text-center">
+                <qrcode 
+                  [qrdata]="usuario.qrData!"
+                  [width]="100"
+                  [errorCorrectionLevel]="'M'"
+                ></qrcode>
+              </td>
+              <td>
+                <button class="btn btn-warning btn-sm me-2" (click)="editarUsuario(usuario)">Editar</button>
+                <button class="btn btn-danger btn-sm me-2" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
+                <button class="btn btn-info btn-sm" (click)="verUsuario(usuario)">Ver</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <nav aria-label="Paginación de usuarios" *ngIf="usuarios.length > itemsPorPagina">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual - 1)">
+              Anterior
+            </a>
+          </li>
           
-          <!-- Paginación -->
-          <nav aria-label="Paginación de usuarios" *ngIf="usuarios.length > itemsPorPagina">
-            <ul class="pagination justify-content-center">
-              <li class="page-item" [class.disabled]="paginaActual === 1">
-                <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual - 1)">
-                  Anterior
-                </a>
-              </li>
-              
-              <li class="page-item" *ngFor="let pagina of paginas" 
-                  [class.active]="pagina === paginaActual">
-                <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(pagina)">
-                  {{ pagina }}
-                </a>
-              </li>
-              
-              <li class="page-item" [class.disabled]="paginaActual === paginas.length">
-                <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">
-                  Siguiente
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+          <li class="page-item" *ngFor="let pagina of paginas" 
+              [class.active]="pagina === paginaActual">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(pagina)">
+              {{ pagina }}
+            </a>
+          </li>
+          
+          <li class="page-item" [class.disabled]="paginaActual === paginas.length">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">
+              Siguiente
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
 </div>

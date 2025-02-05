@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ServiciosService } from '../services/servicios.service';
 import { IonicModule } from '@ionic/angular';  // Asegúrate de importar IonicModule
 import { CommonModule } from '@angular/common';  // Importa CommonModule para usar *ngFor
-
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,  // Marca el componente como standalone
-  imports: [IonicModule, CommonModule]  // Incluye IonicModule y CommonModule aquí
+  imports: [IonicModule, CommonModule],  // Incluye IonicModule y CommonModule aquí
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+
 })
 export class DashboardPage implements OnInit {
   totalUsuarios: number = 0;

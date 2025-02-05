@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-title>
+          {{ esAdmin ? 'Historial de Cargas (Todos los Usuarios)' : 'Mi Historial de Cargas' }}
+      </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container py-4">
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="text-center mt-5">
+          <ion-spinner color="primary"></ion-spinner>
+          <p class="mt-2">Cargando historial...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="alert alert-danger text-center">
+          {{ error }}
+      </div>
+
+      <!-- No Records Message -->
+      <div *ngIf="!loading && registrosCarga.length === 0" class="text-center mt-5">
+          <ion-icon name="documents-outline" class="display-4 text-muted"></ion-icon>
+          <p class="text-muted">No hay registros de carga</p>
+      </div>
+
+      <!-- Charging History List -->
+      <ion-list *ngIf="!loading && registrosCarga.length > 0">
+          <ion-item-sliding *ngFor="let registro of registrosCarga">
+              <ion-item>
+                  <ion-avatar slot="start">
+                      <ion-icon name="battery-charging-outline" class="ion-padding"></ion-icon>
+                  </ion-avatar>
+                  <ion-label>
+                      <!-- Mostrar nombre de usuario solo si es admin -->
+                      <h2>
+                          {{ esAdmin ? 'Carga de ' + (registro.usuario?.nombre || 'Usuario') : 'Mi Carga' }}
+                      </h2>
+                      <p>{{ formatearFecha(registro.fecha_carga) }}</p>
+                      <ion-note color="medium">
+                          {{ registro.qrHabilitado ? 'QR Activo' : 'QR Deshabilitado' }}
+                      </ion-note>
+                  </ion-label>
+              </ion-item>
+
+              <!-- Optional: Swipe actions -->
+              <ion-item-options side="end">
+                  <ion-item-option color="info">
+                      <ion-icon name="information-circle-outline"></ion-icon>
+                      Detalles
+                  </ion-item-option>
+              </ion-item-options>
+          </ion-item-sliding>
+      </ion-list>
+  </div>
+</ion-content>

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ServiciosService } from 'src/app/services/servicios.service';
 import Swal from 'sweetalert2';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
 interface Usuario {
   id: number;
@@ -15,7 +16,7 @@ interface Usuario {
   rol_id: number;
   comunidad_id: number;
   numero_chasis?: string;
-  marca?: string;  // Add these properties
+  marca?: string;
   modelo?: string;
   imagen?: string;
   qrData?: string;
@@ -36,7 +37,8 @@ interface Auto {
   selector: 'app-crear-usuarios',
   templateUrl: './crear-usuarios.page.html',
   styleUrls: ['./crear-usuarios.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule, QRCodeComponent]
+  imports: [CommonModule, ReactiveFormsModule, QRCodeComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CrearUsuariosPage implements OnInit {
   usuarioForm!: FormGroup;
@@ -48,9 +50,8 @@ export class CrearUsuariosPage implements OnInit {
   usuarioIdEditando: number | null = null;
   mostrarModal: boolean = false;
   usuarioSeleccionado: Usuario | null = null;
-  paginaActual: number = 1;
-  itemsPorPagina: number = 5;
-  totalPaginas: number = 0;
+  paginaActual: number = 1; // Página actual
+  itemsPorPagina: number = 5; // Elementos por página
 
   constructor(
     private fb: FormBuilder,
@@ -63,18 +64,20 @@ export class CrearUsuariosPage implements OnInit {
     this.cargarDatos();
   }
 
-  // Getters para paginación
+  // Getter para usuarios paginados
   get usuariosPaginados(): Usuario[] {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
     return this.usuarios.slice(inicio, fin);
   }
 
+  // Getter para el número de páginas
   get paginas(): number[] {
     const totalPaginas = Math.ceil(this.usuarios.length / this.itemsPorPagina);
     return Array(totalPaginas).fill(0).map((_, index) => index + 1);
   }
 
+  // Método para cambiar de página
   cambiarPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.paginas.length) {
       this.paginaActual = pagina;
@@ -94,18 +97,33 @@ export class CrearUsuariosPage implements OnInit {
       modelo: [''], // Optional field for auto
       imagen: [''] // Optional field for image
     });
+  
+    // Listener para el campo nombre
+    this.usuarioForm.get('nombre')?.valueChanges.subscribe((nombre: string) => {
+      if (nombre) {
+        const email = this.generarEmail(nombre);
+        this.usuarioForm.get('email')?.setValue(email);
+      }
+    });
   }
- // Método para abrir el modal con la información detallada del usuario
- verUsuario(usuario: Usuario) {
-  this.usuarioSeleccionado = usuario;
-  this.mostrarModal = true;
-}
 
-// Método para cerrar el modal de usuario
-cerrarModalUsuario() {
-  this.usuarioSeleccionado = null;
-  this.mostrarModal = false;
-}
+  generarEmail(nombre: string): string {
+    // Eliminar espacios y convertir a minúsculas
+    const nombreSinEspacios = nombre.replace(/\s+/g, '').toLowerCase();
+    return `${nombreSinEspacios}@gmail.com`;
+  }
+  // Método para abrir el modal con la información detallada del usuario
+  verUsuario(usuario: Usuario) {
+    this.usuarioSeleccionado = usuario;
+    this.mostrarModal = true;
+  }
+
+  // Método para cerrar el modal de usuario
+  cerrarModalUsuario() {
+    this.usuarioSeleccionado = null;
+    this.mostrarModal = false;
+  }
+
   abrirModal() {
     this.mostrarModal = true;
     this.editando = false;
@@ -135,13 +153,9 @@ cerrarModalUsuario() {
         ...usuario,
         qrData: this.generateQRData(usuario)
       }));
-      this.totalPaginas = Math.ceil(this.usuarios.length / this.itemsPorPagina);
-      // Asegurarse de que la página actual es válida
-      if (this.paginaActual > this.totalPaginas) {
-        this.paginaActual = 1;
-      }
     });
   }
+
   generateQRData(usuario: Usuario): string {
     const comunidad = this.getComunidadNombre(usuario.comunidad_id);
     const rol = this.getRolNombre(usuario.rol_id);
@@ -165,7 +179,7 @@ cerrarModalUsuario() {
           modelo: this.usuarioForm.get('modelo')?.value
         }
       };
-  
+
       this.serviciosService.crearUsuario(usuarioData).subscribe(
         (response: Usuario) => {
           const nuevoUsuario = {
@@ -184,6 +198,7 @@ cerrarModalUsuario() {
       );
     }
   }
+
   editarUsuario(usuario: Usuario) {
     this.usuarioForm.patchValue({
       nombre: usuario.nombre,
@@ -219,7 +234,6 @@ cerrarModalUsuario() {
       );
     }
   }
-
 
   eliminarUsuario(id: number) {
     const confirmacion = confirm('¿Estás seguro de eliminar este usuario?');

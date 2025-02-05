@@ -1,57 +1,52 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title> Escaneo QR </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-6">
-        <div class="qr-container">
-          <h2 class="text-center mb-4 glow-text">Detalles del Auto</h2>
-          
+  <div class="card-container">
+    <div class="lanyard">
+      <div class="lanyard-strap"></div>
+      <div class="lanyard-clip"></div>
+      <div class="id-card">
+        <div class="card-header"></div>
+        <div class="card-body">
+          <h3 class="card-title">Datos del Vehículo</h3>
           <div *ngIf="usuarioSeleccionado">
-            <div class="row mb-4">
-              <div class="col-12">
-                <p><strong>Número de Chasis:</strong> {{ usuarioSeleccionado.numero_chasis || 'N/A' }}</p>
+            <div class="row mb-1">
+              <div class="col-12 d-flex flex-row gap-1">
+                <p><strong>Núm Chasis:</strong> {{ usuarioSeleccionado.numero_chasis || 'N/A' }}</p>
                 <p><strong>Marca:</strong> {{ usuarioSeleccionado.marca || 'N/A' }}</p>
                 <p><strong>Modelo:</strong> {{ usuarioSeleccionado.modelo || 'N/A' }}</p>
               </div>
             </div>
-
+          
             <!-- ✅ Mostrar el código QR solo si está habilitado -->
-            <div class="text-center" *ngIf="usuarioSeleccionado.qrHabilitado">
-              <p><strong>QR Code:</strong></p>
+            <div class="text-center mt-1" *ngIf="usuarioSeleccionado.qrHabilitado">
+              <p class="mb-1"><strong>QR Code:</strong></p>
               <qrcode 
-                [qrdata]="usuarioSeleccionado.qrData" 
-                [width]="256" 
-                [errorCorrectionLevel]="'M'"
-              ></qrcode>
-
-              <button class="btn btn-primary mt-3" (click)="marcarQRComoEscaneado()">
-                Marcar como Escaneado
-              </button>
-            </div>
-
+              [qrdata]="usuarioSeleccionado.qrData" 
+              [width]="256" 
+              [errorCorrectionLevel]="'M'"
+            ></qrcode>     </div>
+          
             <!-- ✅ Mensaje cuando el QR está deshabilitado -->
-            <div class="text-center mt-3 text-danger" *ngIf="!usuarioSeleccionado.qrHabilitado">
-              <p><strong>El código QR está deshabilitado</strong></p>
-              <p>Se activará nuevamente en 7 días.</p>
+            <div class="text-center mt-1 text-danger" *ngIf="!usuarioSeleccionado.qrHabilitado">
+              <p class="mb-1"><strong>El código QR está deshabilitado</strong></p>
+              <p class="mb-1">Se activará nuevamente en 7 días.</p>
             </div>
-
+          
             <!-- Mensaje de carga mientras se realiza la actualización -->
-            <div *ngIf="loading" class="text-center mt-3">
-              <p>Cargando...</p>
+            <div *ngIf="loading" class="text-center mt-1">
+              <p class="mb-1">Cargando...</p>
+            </div>
+          
+            <div class="text-center mt-2">
+              <p class="mb-1">Escanea el código QR</p>
+              <small class="text-muted">El código se actualiza automáticamente</small>
             </div>
           </div>
-
-          <div class="text-center mt-4">
-            <p class="mb-2">Escanea el código QR</p>
-            <small class="text-muted">El código se actualiza automáticamente</small>
-          </div>
+          
         </div>
       </div>
+      <button class="btn btn-primary mt-3" (click)="marcarQRComoEscaneado()">
+        Marcar como Escaneado
+      </button>
     </div>
   </div>
 </ion-content>

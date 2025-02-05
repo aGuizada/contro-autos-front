@@ -16,7 +16,15 @@ export class Tab3Page implements OnInit {
   ngOnInit() {
     this.loadUserProfile();
   }
-
+  
+  cerrarSesion(): void {
+    localStorage.removeItem('token'); // Elimina el token de autenticación
+    this.user = {}; // Resetea los datos del usuario
+    this.usuario = null;
+    console.log('Sesión cerrada con éxito');
+    window.location.href = '/login'; // Redirige a la página de login
+  }
+  
   // Método para cargar los datos del perfil
   loadUserProfile(): void {
     this.authService.getUserProfile().subscribe({

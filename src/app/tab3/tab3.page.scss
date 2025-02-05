@@ -1,42 +1,91 @@
-/* profile.component.scss */
-.profile-header {
-    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
-    min-height: 200px;
-  }
-  
-  .avatar-container {
-    position: relative;
-    
-    ion-avatar {
-      width: 120px;
-      height: 120px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-  }
-  
-  ion-card {
-    border: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+// Eliminar márgenes en ion-content
+.no-padding {
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+// Contenedor principal que se adapta a diferentes pantallas
+.profile-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  padding: 0; // Eliminar cualquier padding extra
+}
+
+// Tarjeta de perfil adaptativa
+.profile-card {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none; // Sin sombras en móvil
+
+  @media (min-width: 768px) { // En pantallas más grandes
+    width: 60%; // Un tamaño más moderado
+    height: auto;
+    max-width: 500px;
     border-radius: 12px;
-    
-    ion-card-header {
-      border-bottom: 1px solid #eee;
-    }
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
+}
+
+// Avatar
+.avatar-container {
+  position: relative;
   
-  .list-group-item {
-    border: none;
-    padding: 1rem 0;
-    
-    &:not(:last-child) {
-      border-bottom: 1px solid #eee;
-    }
-    
-    ion-icon {
-      font-size: 1.5rem;
-    }
+  ion-avatar {
+    width: 100px;
+    height: 100px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
+}
+
+// Quitar margen superior en listas
+.list-group-item {
+  border: none;
+  padding: 0.75rem 0;
   
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  &:not(:last-child) {
+    border-bottom: 1px solid #eee;
   }
+}
+
+// Fondo azul del header
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  padding: 1rem;
+}
+// Ajuste general del contenido dentro del ion-card
+ion-card-content {
+  padding: 1.5rem; // Espaciado interno más amplio
+}
+
+// Ajuste de los elementos dentro del contenido
+.list-group-item {
+  padding: 1rem; // Aumentar el padding de cada ítem
+  border-radius: 8px; // Bordes más suaves
+  background-color: #ffffff; // Un fondo sutil para separar los ítems
+  margin-bottom: 0.75rem; // Espacio entre los ítems
+}
+
+// Ajuste del título "Información Personal"
+ion-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem; // Más espacio debajo del título
+}
+
+// Mejor espaciado para los íconos y textos
+.d-flex {
+  align-items: center;
+  gap: 0.75rem; // Espacio entre el ícono y el texto
+}
+
+// Ajuste del botón de cerrar sesión
+ion-button {
+  margin-top: 1.5rem; // Espaciado arriba del botón
+  padding: 0.75rem;
+  font-size: 1rem;
+}

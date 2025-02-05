@@ -1,74 +1,182 @@
-body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .qr-container {
-    background: white;
-    border-radius: 12px; /* Bordes redondeados para el efecto credencial */
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  
-    
-    width: 100%;
-    text-align: center;
-  }
-  
-  .glow-text {
-    color: #4e54c8;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    font-weight: bold;
-  }
-  
-  .qr-code {
-    background: white;
-    padding: 1rem;
-    border-radius: 10px;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    margin-top: 1rem;
-  }
-  
-  .qr-container p {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .qr-container .row {
-    margin-bottom: 1.5rem;
-  }
-  
-  .qr-container .col-12 {
-    text-align: left;
-  }
-  
-  .text-center {
-    text-align: center;
-  }
-  
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .pulse {
-    animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  
-  .container {
-    padding-top: 50px;
-  }
-  
+.card-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.lanyard {
+  width: 100%;
+  max-width: 380px;  /* Aumentado para más espacio */
+  text-align: center;
+  margin: 0 auto;
+}
+
+.lanyard-strap {
+  width: 32px;
+  height: 100px;
+  background: linear-gradient(180deg, #ff1493 0%, #8b008b 100%);
+  margin: 0 auto;
+  border-radius: 4px 4px 0 0;
+}
+
+.lanyard-clip {
+  width: 40px;
+  height: 20px;
+  background: #666;
+  margin: 0 auto;
+  border-radius: 4px;
+  position: relative;
+}
+
+.lanyard-clip::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: #888;
+  border-radius: 50%;
+  border: 2px solid #666;
+}
+
+.id-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-top: -5px;
+  padding: 0 20px 20px;  /* Padding horizontal agregado */
+}
+
+.card-header {
+  height: 80px;
+  background: linear-gradient(45deg, #ff1493, #8b008b, #ff8c00);
+  margin: 0 -20px;  /* Compensar el padding del card */
+}
+
+.card-body {
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Estilos mejorados para el título */
+.card-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* Contenedor de información del vehículo */
+.vehicle-info {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.vehicle-info p {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #2c3e50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.vehicle-info p:last-child {
+  border-bottom: none;
+}
+
+.vehicle-info strong {
+  color: #1a237e;
+  min-width: 140px;
+  display: inline-block;
+}
+
+/* Contenedor del QR */
+.qr-container {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px auto;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.qr-container p {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Botón mejorado */
+.scan-button {
+  background: linear-gradient(45deg, #ff1493, #8b008b);
+  border: none;
+  padding: 10px 25px;
+  color: white;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  width: auto;
+  display: inline-block;
+}
+
+.scan-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(139,0,139,0.3);
+}
+
+/* Estado del QR */
+.qr-status {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.qr-disabled {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.loading-indicator {
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+/* Mensaje de actualización */
+.update-message {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.update-message small {
+  display: block;
+  margin-top: 5px;
+  color: #9ca3af;
+}
