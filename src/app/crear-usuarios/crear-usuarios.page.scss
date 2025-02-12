@@ -1,9 +1,36 @@
 
-/* Estilos adicionales para el modal */
-.modal {
-  background-color: rgba(0, 0, 0, 0.5);
+
+/* Estilos para mejorar la experiencia táctil */
+.btn {
+  touch-action: manipulation;
 }
 
-.modal-dialog {
-  margin-top: 50px;
+.form-control, .form-select {
+  font-size: 16px; /* Previene zoom en iOS */
+}
+
+/* Ajustes para modal fullscreen en móvil */
+@media (max-width: 576px) {
+  .modal-fullscreen-sm-down {
+    padding: 0 !important;
+  }
+  .modal-fullscreen-sm-down .modal-content {
+    border: none;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+}
+
+/* Mejoras visuales */
+.list-group-item:active {
+  background-color: #f8f9fa;
+}
+
+.btn-light {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+.btn-light:hover {
+  background-color: #e9ecef;
 }

@@ -1,94 +1,113 @@
-<div class="container mt-4">
-  <!-- Botón para abrir el modal de nuevo usuario -->
-  <div class="row mb-4">
-    <div class="col-12 text-end">
-      <button class="btn btn-primary" (click)="abrirModal()">
-        <i class="fas fa-plus me-2"></i>Nuevo Usuario
+
+<ion-content>
+<div class="container-fluid px-0">
+  <!-- Header fijo -->
+  <div class="position-fixed top-0 start-0 end-0 bg-white border-bottom z-3">
+    <div class="d-flex justify-content-between align-items-center p-3">
+      <h5 class="mb-0 fw-bold">Usuarios</h5>
+      <button class="btn btn-primary rounded-circle shadow-sm" style="width: 46px; height: 46px;" (click)="abrirModal()">
+        <i class="bi bi-plus-lg fs-5"></i>
       </button>
+    </div>
+    
+    <!-- Barra de búsqueda -->
+    <div class="px-3 pb-3">
+      <div class="input-group input-group-lg">
+        <span class="input-group-text bg-light border-end-0">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control bg-light border-start-0" placeholder="Buscar usuario...">
+      </div>
     </div>
   </div>
 
-  <!-- Modal para crear/editar usuario -->
-  <div class="modal" [class.show]="mostrarModal" [class.d-block]="mostrarModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+  <!-- Espacio para el header fijo -->
+  <div style="height: 120px;"></div>
+
+  <!-- Lista de usuarios -->
+  <div class="px-3">
+    <div class="list-group list-group-flush">
+      <div class="list-group-item border-0 py-3 px-0" *ngFor="let usuario of usuariosPaginados">
+        <div class="d-flex gap-3">
+          <!-- QR Code -->
+          <div class="bg-light rounded p-2" style="width: 90px;">
+            <qrcode
+              [qrdata]="usuario.qrData!"
+              [width]="70"
+              [errorCorrectionLevel]="'M'"
+            ></qrcode>
+          </div>
+          
+          <!-- Información del usuario -->
+          <div class="flex-grow-1">
+            <h6 class="mb-1 fw-bold text-truncate">{{ usuario.nombre }}</h6>
+            <div class="badge bg-light text-dark mb-2">
+              {{ getComunidadNombre(usuario.comunidad_id) }}
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary btn-sm flex-grow-1" (click)="verUsuario(usuario)">
+                <i class="bi bi-eye me-1 text-white"></i> Ver
+              </button>
+              <button class="btn btn-warning btn-sm flex-grow-1 text-white" (click)="editarUsuario(usuario)">
+                <i class="bi bi-pencil me-1 text-white"></i> Editar
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="eliminarUsuario(usuario.id)">
+                <i class="bi bi-trash text-white"></i>
+              </button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de nuevo/editar usuario optimizado para móvil -->
+  <div class="modal" [class.show]="mostrarModal" [class.d-block]="mostrarModal">
+    <div class="modal-dialog modal-fullscreen-sm-down">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ editando ? 'Actualizar Usuario' : 'Crear Usuario' }}</h5>
+          <h5 class="modal-title">{{ editando ? 'Editar' : 'Nuevo' }} Usuario</h5>
           <button type="button" class="btn-close" (click)="cerrarModal()"></button>
         </div>
         <div class="modal-body">
-          <form [formGroup]="usuarioForm">
-            <div class="row">
-              <!-- Campo Nombre -->
-              <div class="col-md-6 mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" id="nombre" formControlName="nombre" class="form-control" required />
-              </div>
-
-              <!-- Campo Email -->
-              <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" formControlName="email" class="form-control" required />
-              </div>
+          <form [formGroup]="usuarioForm" class="px-2">
+            <!-- Campos básicos -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Información básica</label>
+              <input type="text" formControlName="nombre" class="form-control form-control-lg mb-3" placeholder="Nombre completo">
+              <input type="email" formControlName="email" class="form-control form-control-lg mb-3" placeholder="Email">
+              <input type="password" formControlName="password" class="form-control form-control-lg" placeholder="Contraseña" [attr.required]="!editando ? true : null">
             </div>
 
-            <div class="row">
-              <!-- Campo Contraseña -->
-              <div class="col-md-6 mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" id="password" formControlName="password" class="form-control" [attr.required]="!editando ? true : null" />
-              </div>
-
-              <!-- Campo Teléfono -->
+            <!-- Selects -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Detalles de acceso</label>
+              <select formControlName="rol_id" class="form-select form-select-lg mb-3">
+                <option value="">Seleccionar rol</option>
+                <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
+              </select>
               
+              <select formControlName="comunidad_id" class="form-select form-select-lg">
+                <option value="">Seleccionar comunidad</option>
+                <option *ngFor="let comunidad of comunidades" [value]="comunidad.id">
+                  {{ comunidad.nombre }}
+                </option>
+              </select>
             </div>
 
-            <div class="row">
-              <!-- Campo Rol -->
-              <div class="col-md-6 mb-3">
-                <label for="rol" class="form-label">Rol</label>
-                <select formControlName="rol_id" id="rol" class="form-select" required>
-                  <option value="">Seleccione un rol</option>
-                  <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
-                </select>
-              </div>
-
-              <!-- Campo Comunidad -->
-              <div class="col-md-6 mb-3">
-                <label for="comunidad" class="form-label">Comunidad</label>
-                <select formControlName="comunidad_id" id="comunidad" class="form-select" required>
-                  <option value="">Seleccione una comunidad</option>
-                  <option *ngFor="let comunidad of comunidades" [value]="comunidad.id">
-                    {{ comunidad.nombre }}
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <!-- Campo Número de Chasis -->
-              <div class="col-md-4 mb-3">
-                <label for="numero_chasis" class="form-label">Número de Chasis</label>
-                <input type="text" id="numero_chasis" formControlName="numero_chasis" class="form-control" />
-              </div>
-
-              <!-- Campo Marca -->
-              <div class="col-md-4 mb-3">
-                <label for="marca" class="form-label">Marca</label>
-                <input type="text" id="marca" formControlName="marca" class="form-control" />
-              </div>
-
-              <!-- Campo Modelo -->
-              <div class="col-md-4 mb-3">
-                <label for="modelo" class="form-label">Modelo</label>
-                <input type="text" id="modelo" formControlName="modelo" class="form-control" />
-              </div>
+            <!-- Información del vehículo -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Información del vehículo</label>
+              <input type="text" formControlName="numero_chasis" class="form-control form-control-lg mb-3" placeholder="Número de chasis">
+              <input type="text" formControlName="marca" class="form-control form-control-lg mb-3" placeholder="Marca">
+              <input type="text" formControlName="modelo" class="form-control form-control-lg" placeholder="Modelo">
             </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
-          <button type="button" class="btn btn-primary" 
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-light btn-lg w-50" (click)="cerrarModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-lg w-50" 
                   [disabled]="usuarioForm.invalid"
                   (click)="editando ? actualizarUsuario() : crearUsuario()">
             {{ editando ? 'Actualizar' : 'Crear' }}
@@ -98,100 +117,79 @@
     </div>
   </div>
 
-  <!-- Modal para ver detalles del usuario -->
-  <div class="modal" [class.show]="usuarioSeleccionado" [class.d-block]="usuarioSeleccionado" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+  <!-- Modal de detalles optimizado para móvil -->
+  <div class="modal" [class.show]="usuarioSeleccionado" [class.d-block]="usuarioSeleccionado">
+    <div class="modal-dialog modal-fullscreen-sm-down">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Detalles del Usuario</h5>
           <button type="button" class="btn-close" (click)="cerrarModalUsuario()"></button>
         </div>
-        <div class="modal-body">
-          <div *ngIf="usuarioSeleccionado">
-            <p><strong>Nombre:</strong> {{ usuarioSeleccionado.nombre }}</p>
-            <p><strong>Email:</strong> {{ usuarioSeleccionado.email }}</p>
-            <p><strong>Teléfono:</strong> {{ usuarioSeleccionado.telefono || 'N/A' }}</p>
-            <p><strong>Rol:</strong> {{ getRolNombre(usuarioSeleccionado.rol_id) }}</p>
-            <p><strong>Comunidad:</strong> {{ getComunidadNombre(usuarioSeleccionado.comunidad_id) }}</p>
-            
-            <h6>Detalles del Auto</h6>
-            <p><strong>Número de Chasis:</strong> {{ usuarioSeleccionado.numero_chasis || 'N/A' }}</p>
-            <p><strong>Marca:</strong> {{ usuarioSeleccionado.marca || 'N/A' }}</p>
-            <p><strong>Modelo:</strong> {{ usuarioSeleccionado.modelo || 'N/A' }}</p>
-            
-            <p><strong>QR Code:</strong></p>
+        <div class="modal-body" *ngIf="usuarioSeleccionado">
+          <!-- QR Code centrado -->
+          <div class="text-center mb-4">
             <qrcode
               [qrdata]="usuarioSeleccionado.qrData!"
-              [width]="100"
+              [width]="200"
               [errorCorrectionLevel]="'M'"
+              class="bg-light p-3 rounded"
             ></qrcode>
+          </div>
+
+          <!-- Información del usuario en tarjetas -->
+          <div class="card mb-3">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-3 text-muted">Información Personal</h6>
+              <p class="mb-2"><strong>Nombre:</strong> {{ usuarioSeleccionado.nombre }}</p>
+              <p class="mb-2"><strong>Email:</strong> {{ usuarioSeleccionado.email }}</p>
+              <p class="mb-2"><strong>Rol:</strong> {{ getRolNombre(usuarioSeleccionado.rol_id) }}</p>
+              <p class="mb-0"><strong>Comunidad:</strong> {{ getComunidadNombre(usuarioSeleccionado.comunidad_id) }}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-subtitle mb-3 text-muted">Información del Vehículo</h6>
+              <p class="mb-2"><strong>Número de Chasis:</strong> {{ usuarioSeleccionado.numero_chasis || 'N/A' }}</p>
+              <p class="mb-2"><strong>Marca:</strong> {{ usuarioSeleccionado.marca || 'N/A' }}</p>
+              <p class="mb-0"><strong>Modelo:</strong> {{ usuarioSeleccionado.modelo || 'N/A' }}</p>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="cerrarModalUsuario()">Cerrar</button>
+          <button type="button" class="btn btn-primary btn-lg w-100" (click)="cerrarModalUsuario()">Cerrar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tabla de usuarios -->
-  <div class="row">
-    <div class="col-md-12">
-      <h3>Lista de Usuarios</h3>
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Comunidad</th>
-              <th>Código QR</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let usuario of usuariosPaginados">
-              <td>{{ usuario.nombre }}</td>
-              <td>{{ getComunidadNombre(usuario.comunidad_id) }}</td>
-              <td class="text-center">
-                <qrcode 
-                  [qrdata]="usuario.qrData!"
-                  [width]="100"
-                  [errorCorrectionLevel]="'M'"
-                ></qrcode>
-              </td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" (click)="editarUsuario(usuario)">Editar</button>
-                <button class="btn btn-danger btn-sm me-2" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
-                <button class="btn btn-info btn-sm" (click)="verUsuario(usuario)">Ver</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Paginación -->
-      <nav aria-label="Paginación de usuarios" *ngIf="usuarios.length > itemsPorPagina">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" [class.disabled]="paginaActual === 1">
-            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual - 1)">
-              Anterior
-            </a>
-          </li>
-          
-          <li class="page-item" *ngFor="let pagina of paginas" 
-              [class.active]="pagina === paginaActual">
-            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(pagina)">
-              {{ pagina }}
-            </a>
-          </li>
-          
-          <li class="page-item" [class.disabled]="paginaActual === paginas.length">
-            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">
-              Siguiente
-            </a>
-          </li>
-        </ul>
-      </nav>
+  <!-- Paginación móvil -->
+  <nav class="fixed-bottom bg-white border-top p-3 shadow-lg" *ngIf="usuarios.length > itemsPorPagina">
+    <div class="d-flex justify-content-center align-items-center gap-3">
+      <button 
+        class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+        [disabled]="paginaActual === 1" 
+        (click)="cambiarPagina(paginaActual - 1)">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      
+      <span class="text-muted fw-semibold fs-6">
+        Página {{ paginaActual }} de {{ paginas.length }}
+      </span>
+      
+      <button 
+        class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+        [disabled]="paginaActual === paginas.length" 
+        (click)="cambiarPagina(paginaActual + 1)">
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
-  </div>
+  </nav>
+  
+  
+  
+  
+  <!-- Espacio para la paginación fija -->
+  <div style="height: 60px;"></div>
 </div>
+</ion-content>

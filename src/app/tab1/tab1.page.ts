@@ -26,7 +26,7 @@ export class Tab1Page implements OnInit {
     comunidad: { nombre: '' },
     qrHabilitado: true
   };
-
+  qrEscaneado: boolean = false;  
   loading: boolean = false;
 
   constructor(private usuarioService: ServiciosService) {}

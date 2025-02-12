@@ -1,7 +1,8 @@
 {
   "name": "control-autos",
   "integrations": {
-    "cordova": {}
+    "cordova": {},
+    "capacitor": {}
   },
   "type": "angular"
 }

@@ -18,6 +18,6 @@ import { CargarQrPage } from './cargar-qr.page';
     ZXingScannerModule, 
     CargarQrPageRoutingModule
   ],
- 
+  declarations: [],
 })
 export class CargarQrPageModule {}

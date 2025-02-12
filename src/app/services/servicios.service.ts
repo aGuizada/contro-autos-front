@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class ServiciosService {
 
-  private apiUrl = 'https://prueva.chengroupchina.com/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
+  private apiUrl = 'https://autos.tooboxtrade.com/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
 
   constructor(  private http: HttpClient,
     private router: Router) { }

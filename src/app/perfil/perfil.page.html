@@ -1,85 +1,70 @@
-<!-- profile.component.html -->
-<ion-content>
-    <!-- Profile Header -->
-    <div class="profile-header bg-gradient-primary py-5 mb-4">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-12 text-center">
-            <!-- Profile Avatar -->
-            <div class="avatar-container mb-3">
-              <ion-avatar class="mx-auto border border-4 border-white">
-                <img [src]="usuario?.imagen || 'https://w7.pngwing.com/pngs/358/473/png-transparent-computer-icons-user-profile-person-child-heroes-public-relations-thumbnail.png'" 
-                alt="Profile photo" 
-                class="rounded-circle"
-                style="width: 100px; height: 100px; object-fit: cover;">    </ion-avatar>
+
+<div class="profile-container">
+  <ion-card class="profile-card">
+    <!-- Header con imagen y nombre -->
+    <ion-card-header class="text-center bg-gradient-primary text-white">
+      <div class="avatar-container mb-2">
+        <ion-avatar class="mx-auto border border-4 border-white">
+          <img 
+            [src]="user?.imagen || 'https://w7.pngwing.com/pngs/358/473/png-transparent-computer-icons-user-profile-person-child-heroes-public-relations-thumbnail.png'" 
+            alt="Profile photo" 
+            class="rounded-circle"
+            style="width: 100px; height: 100px; object-fit: cover;">
+        </ion-avatar>
+      </div>
+      <h2 class="mb-1">{{ user?.nombre || 'Nombre de usuario' }}</h2>
+      <p class="text-white-50">{{ user?.email || 'Email del usuario' }}</p>
+    </ion-card-header>
+
+    <!-- Contenido dentro del card -->
+    <ion-card-content>
+      <ion-card-title class="mb-2">
+        <ion-icon name="person" class="me-2"></ion-icon>
+        Información Personal
+      </ion-card-title>
+
+      <div class="list-group list-group-flush">
+        
+        <!-- Email -->
+        <div class="list-group-item px-0">
+          <div class="d-flex align-items-center">
+            <ion-icon name="mail" class="me-2 text-primary"></ion-icon>
+            <div>
+              <small class="text-muted d-block">Email</small>
+              <p class="mb-0">{{ user?.email || 'Email no disponible' }}</p>
             </div>
-            <h2 class="text-white mb-1">{{ user?.nombre || 'Nombre de usuario' }}</h2>
-            <p class="text-white-50">{{ user?.email || 'Email del usuario' }}</p>
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="list-group-item px-0">
+          <div class="d-flex align-items-center">
+            <ion-icon name="call" class="me-2 text-primary"></ion-icon>
+            <div>
+              <small class="text-muted d-block">Teléfono</small>
+              <p class="mb-0">{{ user?.telefono || 'Teléfono no disponible' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ubicación -->
+        <div class="list-group-item px-0">
+          <div class="d-flex align-items-center">
+            <ion-icon name="location" class="me-2 text-primary"></ion-icon>
+            <div>
+              <small class="text-muted d-block">Ubicación</small>
+              <p class="mb-0">{{ user?.ubicacion || 'Ubicación no disponible' }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  
-    <!-- Profile Content -->
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-          <!-- Personal Information Card -->
-          <ion-card class="mb-4">
-            <ion-card-header>
-              <ion-card-title>
-                <div class="d-flex align-items-center">
-                  <ion-icon name="person" class="me-2"></ion-icon>
-                  Información Personal
-                </div>
-              </ion-card-title>
-            </ion-card-header>
-  
-            <ion-card-content>
-              <div class="list-group list-group-flush">
-                <!-- Email -->
-                <div class="list-group-item px-0">
-                  <div class="d-flex align-items-center">
-                    <ion-icon name="mail" class="me-3 text-primary"></ion-icon>
-                    <div>
-                      <small class="text-muted d-block">Email</small>
-                      <p class="mb-0">{{ user?.email || 'Email no disponible' }}</p>
-                    </div>
-                  </div>
-                </div>
-  
-                <!-- Phone -->
-                <div class="list-group-item px-0">
-                  <div class="d-flex align-items-center">
-                    <ion-icon name="call" class="me-3 text-primary"></ion-icon>
-                    <div>
-                      <small class="text-muted d-block">Teléfono</small>
-                      <p class="mb-0">{{ user?.telefono || 'Teléfono no disponible' }}</p>
-                    </div>
-                  </div>
-                </div>
-  
-                <!-- Location -->
-                <div class="list-group-item px-0">
-                  <div class="d-flex align-items-center">
-                    <ion-icon name="location" class="me-3 text-primary"></ion-icon>
-                    <div>
-                      <small class="text-muted d-block">Ubicación</small>
-                      <p class="mb-0">{{ user?.ubicacion || 'Ubicación no disponible' }}</p>
-                    </div>
-                  </div>
-                </div>
-                <ion-button expand="full" color="danger" (click)="cerrarSesion()">
-                    <ion-icon name="log-out-outline" slot="start"></ion-icon>
-                    Cerrar Sesión
-                  </ion-button>
-                  
-              </div>
-            </ion-card-content>
-          </ion-card>
-  
-          <!-- Action Buttons -->
-        </div>
-      </div>
-    </div>
-  </ion-content>
+
+      <!-- Botón de Cerrar Sesión -->
+      <ion-button expand="full" color="danger" class="mt-2" (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Cerrar Sesión
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</div>
+

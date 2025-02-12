@@ -1,13 +1,56 @@
-<div class="container mt-4">
-  <div class="row mb-4">
-    <div class="col-12 text-end">
-      <button class="btn btn-primary" (click)="abrirModal()">
-        <i class="fas fa-plus me-2"></i> Nuevo
+<div class="container-fluid px-0">
+  <!-- Header fijo -->
+  <div class="position-fixed top-0 start-0 end-0 bg-gradient z-3">
+    <div class="d-flex justify-content-between align-items-center p-3">
+      <h5 class="mb-0 fw-bold text-white">Comunidades</h5>
+      <button class="btn  btn-primary  rounded-circle shadow-sm" style="width: 46px; height: 46px;" (click)="abrirModal()">
+        <i class="bi bi-plus-lg fs-5 "></i> <!-- Ícono verde -->
       </button>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="px-3 pb-3">
+      <div class="input-group input-group-lg">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-primary"></i> <!-- Ícono azul -->
+        </span>
+        <input type="search" class="form-control bg-white border-start-0" placeholder="Buscar comunidad...">
+      </div>
     </div>
   </div>
 
-  <!-- Modal de Creación/Edición -->
+  <!-- Espacio para el header fijo -->
+  <div style="height: 120px;"></div>
+
+  <!-- Lista de comunidades -->
+  <div class="px-3">
+    <div class="list-group list-group-flush">
+      <div class="list-group-item border-0 py-2" *ngFor="let comunidad of getPaginatedComunidades()">
+        <div class="card shadow-sm border-0 hover-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1 fw-bold text-truncate ">{{ comunidad.nombre }}</h6>
+
+                <small class="text-muted">ID: {{ comunidad.id }}</small>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-warning btn-sm flex-grow-1 text-white" (click)="editarComunidad(comunidad.id)">
+                  <i class="bi bi-pencil me-1 text-white"></i> Editar
+                </button>
+                <button class="btn btn-danger btn-sm flex-grow-1 text-white" (click)="eliminarComunidad(comunidad.id)">
+                  <i class="bi bi-trash me-1 text-white"></i> Eliminar
+                </button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal optimizado para móvil -->
   <div *ngIf="mostrarModal" class="modal fade show" tabindex="-1" style="display: block;" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -36,36 +79,27 @@
     </div>
   </div>
 
-  <!-- Tabla de Comunidades -->
-  <div class="row">
-    <div class="col-md-12">
-      <h3>Lista de comunidades</h3>
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let comunidad of getPaginatedComunidades()">
-              <td>{{ comunidad.nombre }}</td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" (click)="editarComunidad(comunidad.id)">Editar</button>
-                <button class="btn btn-danger btn-sm" (click)="eliminarComunidad(comunidad.id)">Eliminar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Paginación -->
-      <div class="d-flex justify-content-between align-items-center mt-3">
-        <button class="btn btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
-        <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-        <button class="btn btn-secondary" (click)="nextPage()" [disabled]="currentPage >= getTotalPages()">Siguiente</button>
-      </div>
+  <!-- Paginación móvil -->
+  <nav class="fixed-bottom bg-white border-top p-3 shadow-lg">
+    <div class="d-flex justify-content-center  align-items-center gap-3">
+      <button 
+      class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+        (click)="prevPage()" 
+        [disabled]="currentPage === 1">
+        <i class="bi bi-chevron-left text-primary"></i> <!-- Ícono azul -->
+      </button>
+      <span class="text-muted fw-semibold fs-6">
+        Página {{ currentPage }} de {{ getTotalPages() }}
+      </span>
+      <button 
+      class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+        (click)="nextPage()" 
+        [disabled]="currentPage >= getTotalPages()">
+        <i class="bi bi-chevron-right"></i> <!-- Ícono azul -->
+      </button>
     </div>
-  </div>
+  </nav>
+
+  <!-- Espacio para la paginación fija -->
+  <div style="height: 60px;"></div>
 </div>

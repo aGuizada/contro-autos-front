@@ -1,53 +1,30 @@
-<!-- HTML -->
+<!-- QR Scanner Fullscreen -->
 <div class="scanner-wrapper">
-    <!-- Header -->
-    <div class="text-center mb-5">
-        <h1 class="display-6 fw-bold mb-2">Escáner QR</h1>
-        <p class="text-muted lead">Escanea códigos QR al instante</p>
-    </div>
-        <div class="result-container p-4 mb-4" *ngIf="information">
-        <h6 class="fw-bold mb-3">Resultado del escaneo</h6>
-        <div class="d-flex align-items-center">
-            <span class="status-badge me-3">Escaneado</span>
-            <p class="text-muted mb-0">{{ information }}</p>
-        </div>
-        <button class="btn btn-secondary mt-3" (click)="enableScanner()">Escanear otro código</button>
-    </div>
-    
-    <!-- Scanner Container -->
-    <div class="scan-container mb-4">
-        <div class="scan-area">
-            <zxing-scanner *ngIf="scannerEnabled" 
-                [formats]="allowedFormats"
-                (scanSuccess)="scanSuccessHandler($event)"
-                (scanError)="scanErrorHandler($event)">
-            </zxing-scanner>
-            
-            <!-- Scanning overlay -->
-            <div class="scan-overlay">
-                <div class="scan-corner top-left"></div>
-                <div class="scan-corner top-right"></div>
-                <div class="scan-corner bottom-left"></div>
-                <div class="scan-corner bottom-right"></div>
-                <div class="scan-line"></div>
-            </div>
-        </div>
+    <!-- Cámara en pantalla completa -->
+    <zxing-scanner *ngIf="scannerEnabled"
+        [formats]="allowedFormats"
+        (scanSuccess)="scanSuccessHandler($event)"
+        (scanError)="scanErrorHandler($event)">
+    </zxing-scanner>
+
+    <!-- Cuadrado de escaneo resaltado -->
+    <div class="scanner-frame">
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+        <div class="scan-line"></div>
     </div>
 
-    <!-- Controls Section -->
-    <div class="p-4">
-        <div class="d-grid gap-3">
-            <button class="btn btn-primary control-btn" (click)="enableScanner()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera me-2" viewBox="0 0 16 16">
-                    <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z"/>
-                    <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-                </svg>
-                Iniciar Cámara
-            </button>
-        </div>
+    <!-- Resultado del escaneo -->
+    <div class="result-container" *ngIf="information">
+        <h6 class="fw-bold">Resultado</h6>
+        <p>{{ information }}</p>
+        <button class="btn btn-light mt-2" (click)="enableScanner()">Escanear otro</button>
     </div>
 
-
-    
+    <!-- Botón flotante para iniciar la cámara -->
+    <button class="btn btn-light scan-btn" (click)="enableScanner()">
+        <i class="bi bi-camera"></i> Reiniciar Cámara
+    </button>
 </div>
-
