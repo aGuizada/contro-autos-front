@@ -23,11 +23,23 @@
             <button type="submit" class="btn btn-primary w-100 mb-4" [disabled]="loginForm.invalid">Iniciar Sesión</button>
           </form>
           <div *ngIf="errorMessage" class="text-danger mt-2">{{ errorMessage }}</div>
+          
+          <!-- Soporte Técnico -->
+          <div class="mt-4 text-center">
+            <p class="mb-2">Soporte Técnico</p>
+            <p>
+              <i class="bi bi-envelope icon-style"></i> 
+              <a [href]="emailLink" target="_blank" class="contact-link">arminguizada&#64;gmail.com</a>
+            </p>
+            <p>
+              <i class="bi bi-whatsapp icon-style"></i> 
+              <a [href]="whatsappLink" target="_blank" class="contact-link">62648482</a>
+            </p>
+          </div>
+          
         </div>
 
       </div>
     </div>
   </div>
 </div>
-
-

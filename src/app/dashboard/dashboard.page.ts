@@ -18,7 +18,10 @@ export class DashboardPage implements OnInit, AfterViewInit {
   usuariosPorComunidad: { [comunidad: string]: number } = {};
   usuarios: any[] = [];
   porcentajesPorComunidad: { [comunidad: string]: number } = {};
+  comunidadesMasActivas: { nombre: string; usuarios: number; porcentaje: number }[] = [];
+  usuariosMasActivos: { nombre: string; comunidad: string; cargas: number }[] = [];
   chart: any;
+  activityChart: any;
 
   constructor(private userService: ServiciosService) {}
 
@@ -28,6 +31,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.initChart();
+    this.initActivityChart();
   }
 
   obtenerUsuarios() {
@@ -37,7 +41,9 @@ export class DashboardPage implements OnInit, AfterViewInit {
         this.totalUsuarios = usuarios.length;
         this.contarUsuariosPorComunidad(usuarios);
         this.calcularPorcentajes();
-        this.updateChart();
+        this.ordenarComunidadesPorActividad();
+        this.identificarUsuariosMasActivos(usuarios);
+        this.updateCharts();
       },
       (error) => {
         console.error('Error al obtener usuarios:', error);
@@ -61,8 +67,31 @@ export class DashboardPage implements OnInit, AfterViewInit {
     }
   }
 
+  ordenarComunidadesPorActividad() {
+    this.comunidadesMasActivas = Object.entries(this.usuariosPorComunidad)
+      .map(([nombre, usuarios]) => ({
+        nombre,
+        usuarios,
+        porcentaje: this.porcentajesPorComunidad[nombre]
+      }))
+      .sort((a, b) => b.usuarios - a.usuarios)
+      .slice(0, 5);
+  }
+
+  identificarUsuariosMasActivos(usuarios: any[]) {
+    this.usuariosMasActivos = usuarios
+      .map(usuario => ({
+        nombre: usuario.nombre,
+        comunidad: usuario.comunidad?.nombre || 'Sin Comunidad',
+        cargas: usuario.cargas || 0
+      }))
+      .sort((a, b) => b.cargas - a.cargas)
+      .slice(0, 5);
+  }
+
   getComunidadKeys() {
-    return Object.keys(this.usuariosPorComunidad);
+    return Object.keys(this.usuariosPorComunidad)
+      .sort((a, b) => this.usuariosPorComunidad[b] - this.usuariosPorComunidad[a]);
   }
 
   initChart() {
@@ -102,7 +131,31 @@ export class DashboardPage implements OnInit, AfterViewInit {
     });
   }
 
-  updateChart() {
+  initActivityChart() {
+    const ctx = document.getElementById('activityChart') as HTMLCanvasElement;
+    this.activityChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Actividad por Usuario',
+          data: [],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  updateCharts() {
     if (this.chart) {
       const labels = this.getComunidadKeys();
       const data = labels.map(key => this.usuariosPorComunidad[key]);
@@ -110,6 +163,15 @@ export class DashboardPage implements OnInit, AfterViewInit {
       this.chart.data.labels = labels;
       this.chart.data.datasets[0].data = data;
       this.chart.update();
+    }
+
+    if (this.activityChart) {
+      const labels = this.usuariosMasActivos.map(u => u.nombre);
+      const data = this.usuariosMasActivos.map(u => u.cargas);
+      
+      this.activityChart.data.labels = labels;
+      this.activityChart.data.datasets[0].data = data;
+      this.activityChart.update();
     }
   }
 }

@@ -34,3 +34,174 @@
 .btn-light:hover {
   background-color: #e9ecef;
 }
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stepper-wrapper {
+  margin-bottom: 20px;
+}
+
+.stepper {
+  position: relative;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.step-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+/* Nueva implementación de las líneas conectoras */
+.step-item {
+  position: relative;
+}
+
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 22px; /* La mitad de la altura del círculo (45px/2) */
+  left: calc(50% + 22px); /* Mitad del círculo + radio */
+  width: calc(100% - 45px); /* Ancho total menos el diámetro del círculo */
+  height: 3px;
+  background: #e9ecef;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.step-counter {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e9ecef;
+  margin-bottom: 6px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.step-counter i {
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+ 
+.step-name {
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: center;
+  width: 100%;
+}
+
+/* Estados del step */
+.step-item.active .step-counter {
+  background: var(--bs-primary);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.step-item.active .step-counter i {
+  color: white;
+}
+
+.step-item.active .step-name {
+  color: var(--bs-primary);
+  font-weight: 600;
+}
+
+/* Manejo de las líneas para pasos completados */
+.step-item.completed .step-counter {
+  background: #198754;
+}
+
+.step-item.completed .step-counter i {
+  color: white;
+}
+
+.step-item.completed::after {
+  background: #198754;
+}
+
+/* Solo los completados pintan la línea */
+.step-item.completed::after {
+  background: #198754;
+}
+
+/* El resto de los estilos permanecen igual */
+
+/* Estilos adicionales */
+.form-control-lg, .form-select-lg {
+  border-radius: 12px;
+  padding: 1rem 1rem;
+  font-size: 1rem;
+}
+
+.btn-lg {
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+}
+
+.form-floating > label {
+  padding-left: 1rem;
+}
+
+.modal-fullscreen-sm-down {
+  max-width: 600px;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(50px);
+  background-color: rgb(0, 0, 0); 
+}
+
+/* If you want to ensure the modal itself remains sharp */
+.modal-dialog {
+  z-index: 1056;  /* Should be higher than backdrop */
+}
+
+/* Animation for the blur effect */
+@keyframes blur-in {
+  from {
+    backdrop-filter: blur(0px);
+    background-color: rgba(0, 0, 0, 0.694);
+  }
+  to {
+    backdrop-filter: blur(9px);
+    background-color: rgba(0, 0, 0, 0.753);
+  }
+}
+
+/* Apply animation to backdrop */
+.modal-backdrop.show {
+  animation: blur-in 0.3s forwards;
+}
+
+/* Ensure modal content is not blurred */
+.modal-content {
+  background: white;  /* Or your preferred background color */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.737);
+}
+ 

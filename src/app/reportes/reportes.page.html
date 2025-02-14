@@ -1,7 +1,24 @@
+<ion-content class="bg-light">
+    <div class="container-fluid px-0">
+      <!-- Título -->
+      <div class="position-fixed top-0 start-0 end-0 bg-white border-bottom z-3">
+        <div class="d-flex justify-content-between align-items-center p-3">
+          <h5 class="mb-0 fw-bold ">Comunidades</h5>
+        </div>
+      
+      <!-- Barra de búsqueda -->
+      <div class="px-3 pb-3">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="search" class="form-control bg-light border-start-0" placeholder="Buscar usuario..." (input)="buscarRegistros($event)">
+        </div>
+      </div>
+    </div>
+     <!-- Espacio para el header fijo -->
+  <div style="height: 120px;"></div>
 
-  
-  <ion-content class="bg-light">
-    <div class="container py-4">
       <!-- Loading Spinner -->
       <div *ngIf="loading" class="d-flex flex-column align-items-center justify-content-center vh-100">
         <div class="spinner-border text-primary" role="status"></div>
@@ -26,8 +43,7 @@
             <div class="card shadow-sm rounded-4">
               <div class="card-body d-flex align-items-center">
                 <div class="me-3">
-                    <i class="bi bi-fuel-pump fs-2 text-primary"></i>
-
+                  <i class="bi bi-fuel-pump fs-2 text-primary"></i>
                 </div>
                 <div>
                   <h6 class="mb-1 fw-bold">
@@ -44,32 +60,32 @@
           </div>
         </div>
       </div>
+  
+      <!-- Paginación fija en la parte inferior -->
+      <nav class="fixed-bottom bg-white border-top p-3 shadow-lg" *ngIf="registrosCarga.length > pageSize">
+        <div class="d-flex justify-content-center align-items-center gap-3">
+          <button 
+            class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+            [disabled]="currentPage === 1" 
+            (click)="paginaAnterior()">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          
+          <span class="text-muted fw-semibold fs-6">
+            Página {{ currentPage }} de {{ totalPages }}
+          </span>
+          
+          <button 
+            class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
+            [disabled]="currentPage === totalPages" 
+            (click)="paginaSiguiente()">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </nav>
+  
+      <!-- Espacio para la paginación fija -->
+      <div style="height: 60px;"></div>
     </div>
-  
-    <!-- Paginación fija en la parte inferior -->
-    <nav class="fixed-bottom bg-white border-top p-3 shadow-lg" *ngIf="registrosCarga.length > pageSize">
-      <div class="d-flex justify-content-center align-items-center gap-3">
-        <button 
-          class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
-          [disabled]="currentPage === 1" 
-          (click)="paginaAnterior()">
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        
-        <span class="text-muted fw-semibold fs-6">
-          Página {{ currentPage }} de {{ totalPages }}
-        </span>
-        
-        <button 
-          class="btn btn-outline-primary rounded-circle p-2 shadow-sm"
-          [disabled]="currentPage === totalPages" 
-          (click)="paginaSiguiente()">
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
-    </nav>
-  
-    <!-- Espacio para la paginación fija -->
-    <div style="height: 60px;"></div>
   </ion-content>
   

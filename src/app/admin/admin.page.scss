@@ -1,0 +1,70 @@
+/* Estilo para el menú lateral */
+.sidebar {
+    width: 305px;
+    height: 100vh;
+    background-color: #ffffff; /* Fondo oscuro */
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+  }
+  
+  .sidebar .nav-link {
+    color: rgb(7, 7, 7);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color: #495057; /* Fondo más claro al pasar el mouse */
+  }
+  
+  .sidebar .nav-link ion-icon {
+    margin-right: 10px;
+    font-size: 1.2em;
+  }
+  
+  /* Estilo para el enlace activo */
+  .active {
+    background-color: #007bff; /* Fondo azul */
+    color: white; /* Texto blanco */
+  }
+  
+  /* Contenido principal */
+  .main-content {
+    margin-left: 250px; /* Ajuste para el menú lateral */
+    padding: 20px;
+  }
+  
+  /* Barra superior */
+  .navbar {
+    background-color: #007bff; /* Barra superior azul */
+    color: white;
+  }
+  
+  .navbar .navbar-brand {
+    color: white;
+  }
+  /* Estilos para el menú en dispositivos móviles */
+@media (max-width: 768px) {
+  ion-menu {
+    --width: 250px; /* Ajusta el ancho del menú */
+  }
+
+  .sidebar {
+    padding: 10px; /* Reduce el padding para ahorrar espacio */
+  }
+
+  .nav-link {
+    font-size: 14px; /* Reduce el tamaño de la fuente */
+    padding: 8px 10px; /* Ajusta el padding de los enlaces */
+  }
+
+  ion-icon {
+    font-size: 18px; /* Reduce el tamaño de los íconos */
+    margin-right: 8px; /* Ajusta el margen derecho de los íconos */
+  }
+}

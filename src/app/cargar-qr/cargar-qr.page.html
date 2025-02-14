@@ -1,30 +1,57 @@
-<!-- QR Scanner Fullscreen -->
-<div class="scanner-wrapper">
-    <!-- Cámara en pantalla completa -->
-    <zxing-scanner *ngIf="scannerEnabled"
+<ion-content [fullscreen]="true">
+    <div class="scanner-wrapper">
+      <zxing-scanner
+        #scanner
         [formats]="allowedFormats"
+        [videoConstraints]="videoConstraints"
+        [torch]="torchEnabled"
+        [device]="currentDevice"
         (scanSuccess)="scanSuccessHandler($event)"
-        (scanError)="scanErrorHandler($event)">
-    </zxing-scanner>
-
-    <!-- Cuadrado de escaneo resaltado -->
-    <div class="scanner-frame">
-        <div class="corner top-left"></div>
-        <div class="corner top-right"></div>
-        <div class="corner bottom-left"></div>
-        <div class="corner bottom-right"></div>
-        <div class="scan-line"></div>
+        (scanError)="scanErrorHandler($event)"
+        (camerasFound)="onCamerasFound($event)"
+        class="scanner-container">
+      </zxing-scanner>
+  
+      <div class="scan-overlay">
+        <div class="scan-region">
+          <div class="corner-tl"></div>
+          <div class="corner-tr"></div>
+          <div class="corner-bl"></div>
+          <div class="corner-br"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+  
+      <div class="controls-container">
+        <ion-button (click)="toggleTorch()" color="light" fill="clear" shape="round">
+          <ion-icon [name]="torchEnabled ? 'flash-off' : 'flash'" slot="icon-only"></ion-icon>
+        </ion-button>
+        
+        <ion-button *ngIf="hasMultipleCameras()" (click)="switchCamera()" color="light" fill="clear" shape="round">
+          <ion-icon name="camera-reverse" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+  
+      <!-- Modal para mostrar resultados -->
+      <div class="modal-overlay" *ngIf="information">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Resultado del Escaneo</h2>
+            <ion-button fill="clear" (click)="closeModal()" class="close-button">
+              <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="modal-body">
+            <div class="scanned-info">
+              {{ formatInformation(information) }}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <ion-button expand="block" (click)="closeModal()" >
+              Cerrar
+            </ion-button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Resultado del escaneo -->
-    <div class="result-container" *ngIf="information">
-        <h6 class="fw-bold">Resultado</h6>
-        <p>{{ information }}</p>
-        <button class="btn btn-light mt-2" (click)="enableScanner()">Escanear otro</button>
-    </div>
-
-    <!-- Botón flotante para iniciar la cámara -->
-    <button class="btn btn-light scan-btn" (click)="enableScanner()">
-        <i class="bi bi-camera"></i> Reiniciar Cámara
-    </button>
-</div>
+  </ion-content>

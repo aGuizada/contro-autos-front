@@ -1,79 +1,234 @@
-/* Hace que la cámara ocupe toda la pantalla */
-.scanner-wrapper {
+/* cargar-qr.page.scss */
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  ion-content {
+    --background: transparent;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+  }
+  
+  .scanner-wrapper {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    background: black;
-}
-
-/* Cuadrado de escaneo flotante */
-.scanner-frame {
-    position: absolute;
-    width: 250px;
-    height: 250px;
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* Esquinas resaltadas */
-.corner {
-    width: 30px;
-    height: 30px;
-    border: 4px solid #0d6efd;
-    position: absolute;
-}
-
-.top-left { top: -4px; left: -4px; border-right: none; border-bottom: none; }
-.top-right { top: -4px; right: -4px; border-left: none; border-bottom: none; }
-.bottom-left { bottom: -4px; left: -4px; border-right: none; border-top: none; }
-.bottom-right { bottom: -4px; right: -4px; border-left: none; border-top: none; }
-
-/* Línea de escaneo animada */
-.scan-line {
+    width: 100%;
+    height: 100%;
+    background: #000;
+  }
+  
+  .scanner-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 4px;
-    background: red;
-    animation: scan-animation 2s infinite linear;
-}
-
-@keyframes scan-animation {
-    0% { top: 0; }
-    50% { top: 50%; }
-    100% { top: 100%; }
-}
-
-/* Botón flotante */
-.scan-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 30px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Texto del resultado */
-.result-container {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    background: rgba(255, 255, 255, 0.9);
-    color: black;
-    padding: 15px;
-    border-radius: 10px;
+    height: 100%;
+    
+    ::ng-deep video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+    }
+  }
+  
+  .scan-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+  }
+  
+  .scan-region {
+    width: 280px;
+    height: 280px;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    
+    .corner-tl, .corner-tr, .corner-bl, .corner-br {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+    }
+    
+    .corner-tl {
+      top: -2px;
+      left: -2px;
+      border-right: 0;
+      border-bottom: 0;
+    }
+    
+    .corner-tr {
+      top: -2px;
+      right: -2px;
+      border-left: 0;
+      border-bottom: 0;
+    }
+    
+    .corner-bl {
+      bottom: -2px;
+      left: -2px;
+      border-right: 0;
+      border-top: 0;
+    }
+    
+    .corner-br {
+      bottom: -2px;
+      right: -2px;
+      border-left: 0;
+      border-top: 0;
+    }
+  
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: #00ff00;
+      top: 50%;
+      animation: scan 2s linear infinite;
+    }
+  }
+  
+  .controls-container {
+    position: fixed;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    z-index: 3;
+  }
+  
+  .result-overlay {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 16px;
+    z-index: 4;
+  }
+  
+  .result-content {
+    color: white;
     text-align: center;
-}
+  }
+  
+  @keyframes scan {
+    0% {
+      transform: translateY(-100px);
+    }
+    100% {
+      transform: translateY(100px);
+    }
+  }
+  
+  /* Ajustes específicos para móviles */
+  @media (max-width: 768px) {
+    .scan-region {
+      width: 80vw;  /* 80% del ancho de la ventana */
+      height: 80vw; /* Mantener proporción cuadrada */
+      max-width: 280px;
+      max-height: 280px;
+    }
+  
+    .controls-container {
+      bottom: 50px; /* Un poco más arriba en móviles */
+    }
+  }
+  ion-app {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  ion-content {
+    --offset-top: 0 !important;
+    --offset-bottom: 0 !important;
+  }
+  /* Estilos previos se mantienen igual hasta la parte del modal */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+  
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+  
+    .close-button {
+      --padding-start: 4px;
+      --padding-end: 4px;
+      height: 36px;
+      margin: 0;
+    }
+  }
+  
+  .modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    background-color: white;
+  
+    .scanned-info {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
+  }
+  
+  .modal-footer {
+    padding: 16px;
+    border-top: 1px solid #ccc;
+    background-color: #f8f9fa;
+  
+    ion-button {
+      margin: 0;
+    }
+  }

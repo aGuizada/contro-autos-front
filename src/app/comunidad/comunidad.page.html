@@ -1,10 +1,12 @@
+<ion-content>
 <div class="container-fluid px-0">
   <!-- Header fijo -->
-  <div class="position-fixed top-0 start-0 end-0 bg-gradient z-3">
+  <div class="position-fixed top-0 start-0 end-0 bg-white border-bottom z-3">
     <div class="d-flex justify-content-between align-items-center p-3">
-      <h5 class="mb-0 fw-bold text-white">Comunidades</h5>
-      <button class="btn  btn-primary  rounded-circle shadow-sm" style="width: 46px; height: 46px;" (click)="abrirModal()">
-        <i class="bi bi-plus-lg fs-5 "></i> <!-- Ícono verde -->
+      <h5 class="mb-0 fw-bold ">Comunidades</h5>
+      <button class="btn  btn-primary d-flex align-items-center shadow-sm px-3 py-2 rounded-pill"  (click)="abrirModal()">
+        <i class="bi bi-plus-lg fs-5 me-2 "></i> <!-- Ícono verde -->
+        <span class="fw-bold">Nuevo</span>
       </button>
     </div>
 
@@ -14,41 +16,41 @@
         <span class="input-group-text bg-white border-end-0">
           <i class="bi bi-search text-primary"></i> <!-- Ícono azul -->
         </span>
-        <input type="search" class="form-control bg-white border-start-0" placeholder="Buscar comunidad...">
+        <input type="search" class="form-control bg-white border-start-0rounded-circle shadow-sm" placeholder="Buscar comunidad...">
       </div>
     </div>
   </div>
 
   <!-- Espacio para el header fijo -->
-  <div style="height: 120px;"></div>
+  <div style="height: 140px;"></div>
 
   <!-- Lista de comunidades -->
-  <div class="px-3">
+  <div class="row">
     <div class="list-group list-group-flush">
       <div class="list-group-item border-0 py-2" *ngFor="let comunidad of getPaginatedComunidades()">
-        <div class="card shadow-sm border-0 hover-card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="mb-1 fw-bold text-truncate ">{{ comunidad.nombre }}</h6>
-
+        <div class="card shadow-sm rounded-4">
+          <div class="card-body ">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+              <div class="text-truncate">
+                <h6 class="mb-1 fw-bold">{{ comunidad.nombre }}</h6>
                 <small class="text-muted">ID: {{ comunidad.id }}</small>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn btn-warning btn-sm flex-grow-1 text-white" (click)="editarComunidad(comunidad.id)">
+                <button class="btn btn-warning btn-sm text-white" (click)="editarComunidad(comunidad.id)">
                   <i class="bi bi-pencil me-1 text-white"></i> Editar
                 </button>
-                <button class="btn btn-danger btn-sm flex-grow-1 text-white" (click)="eliminarComunidad(comunidad.id)">
+                <button class="btn btn-danger btn-sm text-white" (click)="eliminarComunidad(comunidad.id)">
                   <i class="bi bi-trash me-1 text-white"></i> Eliminar
                 </button>
               </div>
-              
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  
+  
 
   <!-- Modal optimizado para móvil -->
   <div *ngIf="mostrarModal" class="modal fade show" tabindex="-1" style="display: block;" aria-hidden="true">
@@ -103,3 +105,4 @@
   <!-- Espacio para la paginación fija -->
   <div style="height: 60px;"></div>
 </div>
+</ion-content>

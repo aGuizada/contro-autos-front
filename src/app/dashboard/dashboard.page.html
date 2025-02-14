@@ -1,85 +1,141 @@
 <ion-content>
-  <div class="container mt-4">
-    <div class="row">
-        <!-- Total Users Card -->
+    <div class="container mt-4">
+      <!-- Summary Cards Row -->
+      <div class="row">
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Total de Usuarios</h5>
-                    <h2 class="display-4 text-primary">{{ totalUsuarios }}</h2>
-                </div>
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">Total de Usuarios</h5>
+              <h2 class="display-4 text-primary">{{ totalUsuarios }}</h2>
             </div>
+          </div>
         </div>
-
-        <!-- Users by Community Chart -->
+  
+        <!-- Top Communities Card -->
         <div class="col-md-8 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Usuarios por Comunidad</h5>
-                    <canvas id="communityChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Community Statistics -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Estadísticas por Comunidad</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Comunidad</th>
-                                    <th>Usuarios</th>
-                                    <th>Porcentaje</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let comunidad of getComunidadKeys()">
-                                    <td>{{ comunidad }}</td>
-                                    <td>{{ usuariosPorComunidad[comunidad] }}</td>
-                                    <td>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" 
-                                                 [style.width]="porcentajesPorComunidad[comunidad] + '%'"
-                                                 [attr.aria-valuenow]="porcentajesPorComunidad[comunidad]"
-                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ porcentajesPorComunidad[comunidad].toFixed(2) }}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detailed Users List -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Usuarios Detallados</h5>
-                    <div class="list-group">
-                        <div class="list-group-item" *ngFor="let usuario of usuarios">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>{{ usuario.nombre }}</strong>
-                                <span class="badge bg-primary rounded-pill">
-                                    {{ usuario.comunidad?.nombre || 'Sin Comunidad' }}
-                                </span>
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title d-flex align-items-center">
+                <i class="bi bi-bar-chart-fill me-2"></i>Top 5 Comunidades más Activas
+              </h5>
+              <div class="table-responsive">
+                <table class="table table-hover table-borderless">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Posición</th>
+                      <th>Comunidad</th>
+                      <th>Usuarios</th>
+                      <th>Porcentaje</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let comunidad of comunidadesMasActivas; let i = index">
+                      <td>
+                        <span class="badge bg-primary rounded-pill">#{{ i + 1 }}</span>
+                      </td>
+                      <td class="fw-bold">{{ comunidad.nombre }}</td>
+                      <td>{{ comunidad.usuarios }}</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                            <div class="progress-bar bg-gradient-success" 
+                                 [style.width]="comunidad.porcentaje + '%'"
+                                 [attr.aria-valuenow]="comunidad.porcentaje"
+                                 aria-valuemin="0" aria-valuemax="100">
                             </div>
+                          </div>
+                          <span class="text-muted">{{ comunidad.porcentaje.toFixed(1) }}%</span>
                         </div>
-                    </div>
-                </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+  
+      <!-- Charts Row -->
+      <div class="row">
+        <div class="col-md-6 mb-4 order-md-3 order-2">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Distribución de Usuarios por Comunidad</h5>
+              <canvas id="communityChart"></canvas>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-6 mb-4 order-md-4 order-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Actividad de Usuarios Top</h5>
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Detailed Statistics Row -->
+      <div class="row">
+        <div class="col-md-6 mb-4 order-md-2 order-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Top 5 Usuarios más Activos</h5>
+              <div class="list-group">
+                <div class="list-group-item" *ngFor="let usuario of usuariosMasActivos; let i = index">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>#{{ i + 1 }} {{ usuario.nombre }}</strong>
+                      <br>
+                      <small class="text-muted">{{ usuario.comunidad }}</small>
+                    </div>
+                    <span class="badge bg-success rounded-pill">
+                      {{ usuario.cargas }} cargas
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-6 mb-4 order-md-1 order-1">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Estadísticas Detalladas</h5>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Comunidad</th>
+                      <th>Usuarios</th>
+                      <th>Porcentaje</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let comunidad of getComunidadKeys()">
+                      <td>{{ comunidad }}</td>
+                      <td>{{ usuariosPorComunidad[comunidad] }}</td>
+                      <td>
+                        <div class="progress">
+                          <div class="progress-bar" 
+                               [style.width]="porcentajesPorComunidad[comunidad] + '%'"
+                               [attr.aria-valuenow]="porcentajesPorComunidad[comunidad]"
+                               aria-valuemin="0" aria-valuemax="100">
+                            {{ porcentajesPorComunidad[comunidad].toFixed(1) }}%
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-
-</ion-content>
-
-   
+  </ion-content>
+  

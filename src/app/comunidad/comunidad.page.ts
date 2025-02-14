@@ -2,19 +2,22 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ServiciosService } from '../services/servicios.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
   selector: 'app-comunidad',
   standalone: true,
   templateUrl: './comunidad.page.html',
   styleUrls: ['./comunidad.page.scss'],
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ComunidadPage {
   comunidades: any[] = [];
   comunidadForm: FormGroup;
   mostrarModal = false;
   editando = false;
+  comunidadEditandoId: number | null = null; // Almacenar ID al editar
 
   // Variables para la paginación
   itemsPerPage = 7;
@@ -42,26 +45,23 @@ export class ComunidadPage {
     );
   }
 
-  // Paginación: obtener las comunidades de la página actual
+  // Paginación
   getPaginatedComunidades() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.comunidades.slice(start, end);
   }
 
-  // Obtener el total de páginas
   getTotalPages(): number {
     return Math.ceil(this.comunidades.length / this.itemsPerPage);
   }
 
-  // Cambiar a la página anterior
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
   }
 
-  // Cambiar a la página siguiente
   nextPage() {
     if (this.currentPage < this.getTotalPages()) {
       this.currentPage++;
@@ -72,6 +72,7 @@ export class ComunidadPage {
   abrirModal() {
     this.mostrarModal = true;
     this.editando = false;
+    this.comunidadEditandoId = null;
     this.inicializarFormulario();
   }
 
@@ -91,6 +92,7 @@ export class ComunidadPage {
         () => {
           this.getComunidades();
           this.cerrarModal();
+          alert('Se registró correctamente la comunidad.');
         },
         (error) => console.error('Error al crear la comunidad', error)
       );
@@ -102,6 +104,7 @@ export class ComunidadPage {
     const comunidad = this.comunidades.find(c => c.id === id);
     if (comunidad) {
       this.comunidadForm.setValue({ nombre: comunidad.nombre });
+      this.comunidadEditandoId = id;
       this.editando = true;
       this.mostrarModal = true;
     }
@@ -114,6 +117,7 @@ export class ComunidadPage {
         () => {
           this.getComunidades();
           this.cerrarModal();
+          alert('Se actualizó correctamente la comunidad.');
         },
         (error) => console.error('Error al actualizar la comunidad', error)
       );
@@ -122,21 +126,24 @@ export class ComunidadPage {
 
   // Guardar comunidad (crear o actualizar)
   guardarComunidad() {
-    if (this.editando) {
-      const id = this.comunidades.find(c => c.nombre === this.comunidadForm.value.nombre)?.id;
-      if (id) {
-        this.actualizarComunidad(id);
-      }
+    if (this.editando && this.comunidadEditandoId) {
+      this.actualizarComunidad(this.comunidadEditandoId);
     } else {
       this.crearComunidad();
     }
   }
 
-  // Eliminar comunidad
+  // Eliminar comunidad con confirmación
   eliminarComunidad(id: number) {
-    this.serviciosService.eliminarComunidad(id).subscribe(
-      () => this.getComunidades(),
-      (error) => console.error('Error al eliminar la comunidad', error)
-    );
+    const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta comunidad?');
+    if (confirmacion) {
+      this.serviciosService.eliminarComunidad(id).subscribe(
+        () => {
+          this.getComunidades();
+          alert('Comunidad eliminada correctamente.');
+        },
+        (error) => console.error('Error al eliminar la comunidad', error)
+      );
+    }
   }
 }

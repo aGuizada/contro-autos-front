@@ -103,3 +103,49 @@ body {
     background-color: var(--hover-color);
     transform: translateY(-2px);
 }
+/* Overall text styling */
+.text-center {
+  text-align: center;
+}
+
+/* Styling for the icons */
+.icon-style {
+  font-size: 1.5rem;  /* Icon size */
+  color: #007bff;     /* Default blue color for icons */
+  margin-right: 8px;   /* Space between the icon and text */
+  transition: color 0.3s ease;  /* Smooth color transition on hover */
+}
+
+/* Change icon color on hover */
+.icon-style:hover {
+  color: #25d366;  /* WhatsApp's green color */
+}
+
+/* Styling for the contact links */
+.contact-link {
+  color: #007bff;   /* Link color */
+  text-decoration: none;   /* Remove underline */
+  font-size: 1.1rem;  /* Slightly larger font for the link */
+  transition: color 0.3s ease;  /* Smooth color transition on hover */
+}
+
+/* Change link color on hover */
+.contact-link:hover {
+  color: #25d366;   /* Green color for WhatsApp on hover */
+}
+
+/* Optional: Add spacing between contact items */
+.mb-2 {
+  margin-bottom: 1rem;   /* Adds space below the text */
+}
+
+/* Optional: Responsive design for smaller screens */
+@media (max-width: 576px) {
+  .icon-style {
+    font-size: 1.2rem;  /* Smaller icon size on mobile */
+  }
+
+  .contact-link {
+    font-size: 1rem;  /* Slightly smaller font on mobile */
+  }
+}

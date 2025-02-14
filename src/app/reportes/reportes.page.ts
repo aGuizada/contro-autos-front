@@ -98,4 +98,12 @@ export class ReportesPage implements OnInit {
     });
   }
   
+  buscarRegistros(event: any) {
+    const searchTerm = event.target.value.toLowerCase();
+    this.registrosPaginados = this.registrosCarga.filter((registro: any) => 
+      registro.usuario?.nombre.toLowerCase().includes(searchTerm) ||
+      registro.usuario?.email.toLowerCase().includes(searchTerm)
+    );
+  }
+  
 }
