@@ -1,45 +1,48 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="row justify-content-center w-100">
-    <div class="col-xl-10">
-      <div class="split-container d-flex flex-column flex-md-row">
-        
-        <!-- Lado izquierdo con imagen -->
-        <div class="left-side">
-          <img src="https://estaqueue.udpsa.com/img/LOGIN-AGENTE.png" alt="Logo" class="img-fluid">
-        </div>
+<ion-content>
 
-        <!-- Lado derecho con formulario -->
-        <div class="right-side">
-          <h2 class="h3 fw-bold mb-4">Iniciar Sesión</h2>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="mb-4">
-              <label class="form-label">Correo electrónico</label>
-              <input formControlName="email" type="email" class="form-control" placeholder="nombre@ejemplo.com" required>
-            </div>
-            <div class="mb-4">
-              <label class="form-label">Contraseña</label>
-              <input formControlName="password" type="password" class="form-control" placeholder="Ingresa tu contraseña" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-4" [disabled]="loginForm.invalid">Iniciar Sesión</button>
-          </form>
-          <div *ngIf="errorMessage" class="text-danger mt-2">{{ errorMessage }}</div>
+  <!-- Spinner de carga -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-content">
+      <img src="https://estaqueue.udpsa.com/img/LOGIN-AGENTE.png" alt="Logo" class="loading-logo">
+      <p>Iniciando sesión...</p>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="progress"></div>
+      </div>
+      <p>{{ progress }}%</p>
+    </div>
+  </div>
+
+  <!-- Contenido del login (se oculta mientras isLoading = true) -->
+  <div *ngIf="!isLoading" class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row justify-content-center w-100">
+      <div class="col-xl-10">
+        <div class="split-container d-flex flex-column flex-md-row">
           
-          <!-- Soporte Técnico -->
-          <div class="mt-4 text-center">
-            <p class="mb-2">Soporte Técnico</p>
-            <p>
-              <i class="bi bi-envelope icon-style"></i> 
-              <a [href]="emailLink" target="_blank" class="contact-link">arminguizada&#64;gmail.com</a>
-            </p>
-            <p>
-              <i class="bi bi-whatsapp icon-style"></i> 
-              <a [href]="whatsappLink" target="_blank" class="contact-link">62648482</a>
-            </p>
+          <!-- Lado izquierdo con imagen -->
+          <div class="left-side">
+            <img src="https://estaqueue.udpsa.com/img/LOGIN-AGENTE.png" alt="Logo" class="img-fluid">
           </div>
-          
-        </div>
 
+          <!-- Lado derecho con formulario -->
+          <div class="right-side">
+            <h2 class="h3 fw-bold mb-4">Iniciar Sesión</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mb-4">
+                <label class="form-label">Correo electrónico</label>
+                <input formControlName="email" type="email" class="form-control" placeholder="nombre@ejemplo.com" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Contraseña</label>
+                <input formControlName="password" type="password" class="form-control" placeholder="Ingresa tu contraseña" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mb-4" [disabled]="loginForm.invalid">Iniciar Sesión</button>
+            </form>
+            <div *ngIf="errorMessage" class="text-danger mt-2">{{ errorMessage }}</div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+</ion-content>

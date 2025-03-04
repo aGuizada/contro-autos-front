@@ -5,6 +5,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ServiciosService } from 'src/app/services/servicios.service';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';        // Importación predeterminada de jsPDF
+import 'jspdf-autotable'; 
+import { Platform } from '@ionic/angular';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import 'jspdf-autotable';
+import { autoTable } from 'jspdf-autotable';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 interface Usuario {
   id: number;
@@ -64,7 +74,9 @@ export class CrearUsuariosPage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private serviciosService: ServiciosService
+    private serviciosService: ServiciosService,  private platform: Platform,
+    private file: File,
+    private fileOpener: FileOpener
   ) {
     this.inicializarFormulario();
   }
@@ -391,4 +403,188 @@ Modelo: ${usuario.modelo || 'N/A'}`;
     const comunidad = this.comunidades.find(c => c.id === comunidadId);
     return comunidad ? comunidad.nombre : '';
   }
+  exportarAExcel(): void {
+    if (this.usuariosFiltrados.length === 0) {
+      alert("No hay usuarios para exportar.");
+      return;
+    }
+  
+    // Crear la hoja de cálculo
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.usuariosFiltrados.map(usuario => ({
+      'Nombre': usuario.nombre,
+      'Email': usuario.email,
+      'Teléfono': usuario.telefono || 'N/A',
+      'Comunidad': this.getComunidadNombre(usuario.comunidad_id),
+      'Rol': this.getRolNombre(usuario.rol_id),
+      'Marca': usuario.auto?.marca || 'N/A',
+      'Modelo': usuario.auto?.modelo || 'N/A',
+      'Número de Chasis': usuario.auto?.numero_chasis || 'N/A'
+    })));
+  
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Usuarios': worksheet },
+      SheetNames: ['Usuarios']
+    };
+  
+    // Definir el nombre del archivo
+    const fileName = `Usuarios_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  
+    if (this.platform.is('cordova') || this.platform.is('capacitor')) {
+      // Para dispositivos móviles 
+      this.guardarExcelEnDispositivo(workbook, fileName);
+    } else {
+      // Para navegador web
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url: string = window.URL.createObjectURL(data);
+      const a: HTMLAnchorElement = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+  }
+  
+  // Para exportar a PDF
+  exportarAPDF(): void {
+    if (this.usuariosFiltrados.length === 0) {
+      alert("No hay usuarios para exportar.");
+      return;
+    }
+  
+    // Crear documento PDF
+    const doc = new jsPDF();
+  
+    // Agregar título
+    doc.setFontSize(18);
+    doc.text("Lista de Usuarios", 14, 15);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 25);
+  
+    // Preparar datos para la tabla
+    const datosTabla = this.usuariosFiltrados.map(usuario => [
+      usuario.nombre,
+      usuario.email,
+      usuario.telefono || 'N/A',
+      this.getComunidadNombre(usuario.comunidad_id)
+    ]);
+  
+    // Agregar tabla
+    autoTable(doc, {
+      head: [['Nombre', 'Email', 'Teléfono', 'Comunidad']],
+      body: datosTabla,
+      startY: 30
+    });
+  
+    // Definir el nombre del archivo
+    const fileName = `Usuarios_${new Date().toISOString().slice(0, 10)}.pdf`;
+  
+    if (this.platform.is('cordova') || this.platform.is('capacitor')) {
+      // Para dispositivos móviles
+      this.guardarPDFEnDispositivo(doc, fileName);
+    } else {
+      // Para navegador web
+      doc.save(fileName);
+    }
+  }
+  
+  // Método para guardar Excel en dispositivos móviles
+  async guardarExcelEnDispositivo(workbook: XLSX.WorkBook, fileName: string) {
+    try {
+      // Obtener el directorio adecuado según la plataforma
+      let directory = this.file.externalDataDirectory;
+      
+      if (this.platform.is('ios')) {
+        directory = this.file.documentsDirectory; // Usar documentsDirectory en iOS
+      }
+      
+      if (!directory) {
+        console.error('No se pudo obtener un directorio válido para guardar');
+        alert('Error: No se pudo acceder al almacenamiento del dispositivo');
+        return;
+      }
+      
+      // Convertir Excel a ArrayBuffer
+      const excelOutput = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      
+      // Verificar que el directorio existe o crearlo
+      try {
+        await this.file.checkDir(directory, '');
+      } catch (err) {
+        console.log('El directorio no existe, intentando crear:', err);
+        try {
+          await this.file.createDir(directory, '', false);
+        } catch (createErr) {
+          console.error('Error al crear el directorio:', createErr);
+          alert('No se pudo crear el directorio para guardar el archivo.');
+          return;
+        }
+      }
+      
+      // Guardar el archivo
+      await this.file.writeFile(directory, fileName, new Blob([excelOutput], 
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 
+        { replace: true });
+      console.log('Archivo Excel guardado con éxito');
+      
+      // Abrir el archivo
+      await this.fileOpener.open(
+        directory + fileName, 
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      );
+      console.log('Archivo Excel abierto con éxito');
+      
+    } catch (error) {
+      console.error('Error completo al guardar/abrir Excel:', error);
+      alert('Error al guardar o abrir el Excel: ' + JSON.stringify(error));
+    }
+  }
+  
+  // Método para guardar PDF en dispositivos móviles
+  async guardarPDFEnDispositivo(doc: jsPDF, fileName: string) {
+    try {
+      // Obtener el directorio adecuado según la plataforma
+      let directory = this.file.externalDataDirectory;
+      
+      if (this.platform.is('ios')) {
+        directory = this.file.documentsDirectory; // Usar documentsDirectory en iOS
+      }
+      
+      if (!directory) {
+        console.error('No se pudo obtener un directorio válido para guardar');
+        alert('Error: No se pudo acceder al almacenamiento del dispositivo');
+        return;
+      }
+      
+      // Convertir PDF a blob
+      const pdfOutput = doc.output('arraybuffer');
+      
+      // Verificar que el directorio existe o crearlo
+      try {
+        await this.file.checkDir(directory, '');
+      } catch (err) {
+        console.log('El directorio no existe, intentando crear:', err);
+        try {
+          await this.file.createDir(directory, '', false);
+        } catch (createErr) {
+          console.error('Error al crear el directorio:', createErr);
+          alert('No se pudo crear el directorio para guardar el archivo.');
+          return;
+        }
+      }
+      
+      // Guardar el archivo
+      await this.file.writeFile(directory, fileName, pdfOutput, { replace: true });
+      console.log('Archivo PDF guardado con éxito');
+      
+      // Abrir el archivo
+      await this.fileOpener.open(directory + fileName, 'application/pdf');
+      console.log('Archivo PDF abierto con éxito');
+      
+    } catch (error) {
+      console.error('Error completo al guardar/abrir PDF:', error);
+      alert('Error al guardar o abrir el PDF: ' + JSON.stringify(error));
+    }
+  }
+  
 }

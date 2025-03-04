@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class ServiciosService {
 
   private apiUrl = 'https://autos.tooboxtrade.com/api';  // URL de tu API de Laravel (ajusta el puerto y dominio si es necesario)
-
+  // private apiUrl = '  http://127.0.0.1:8000/api';
   constructor(  private http: HttpClient,
     private router: Router) { }
 

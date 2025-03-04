@@ -4,7 +4,7 @@ import { ServiciosService } from '../services/servicios.service';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 // Interface para la respuesta del login
 interface LoginResponse {
@@ -18,23 +18,20 @@ interface LoginResponse {
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   imports: [CommonModule, ReactiveFormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class LoginPage implements OnInit {
   loginForm!: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
-  emailLink: SafeResourceUrl;
-  whatsappLink: SafeResourceUrl;
+  progress: number = 0; // Valor inicial del progreso
+  progressInterval: any;
 
   constructor(
     private fb: FormBuilder,
     private authService: ServiciosService,
-    private router: Router,
-    private sanitizer: DomSanitizer
-  ) {
-    this.emailLink = this.sanitizer.bypassSecurityTrustResourceUrl('mailto:arminguizada@gmail.com');
-    this.whatsappLink = this.sanitizer.bypassSecurityTrustResourceUrl('https://wa.me/62648482');
-  }
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -61,6 +58,16 @@ export class LoginPage implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.progress = 0; // Reiniciar la barra de progreso
+
+    // Simular el progreso de carga
+    this.progressInterval = setInterval(() => {
+      if (this.progress < 100) {
+        this.progress += 5;
+      } else {
+        clearInterval(this.progressInterval);
+      }
+    }, 100);
 
     const loginData = this.loginForm.value;
 
@@ -72,40 +79,30 @@ export class LoginPage implements OnInit {
         this.handleLoginError(error);
       },
       complete: () => {
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false;
+          clearInterval(this.progressInterval);
+        }, 1000);
       }
     });
   }
 
   private handleLoginSuccess(response: LoginResponse): void {
     if (response.token) {
-      // Guardar el token en localStorage
       localStorage.setItem('token', response.token);
-      console.log('Token guardado:', response.token);
-
-      // Guardar el email del usuario (no se recomienda guardar la contraseña)
       const email = this.loginForm.value.email;
       localStorage.setItem('emailUsuario', email);
-      console.log('Correo electrónico guardado:', email);
 
-      // Obtener el rol del usuario
       this.authService.getUserRole().subscribe({
         next: (userInfo: any) => {
-          console.log('Respuesta del rol del usuario:', userInfo);
-
           if (userInfo.role) {
             localStorage.setItem('userRole', userInfo.role.toString());
-            console.log('Rol del usuario:', userInfo.role);
-
-            // Redirigir según el rol
             this.redirectBasedOnRole();
           } else {
-            console.log('No se encontró el rol');
             this.errorMessage = 'Error al obtener el rol del usuario';
           }
         },
-        error: (error) => {
-          console.error('Error al obtener el rol:', error);
+        error: () => {
           this.errorMessage = 'Error al obtener el rol del usuario';
         }
       });
@@ -115,9 +112,9 @@ export class LoginPage implements OnInit {
   }
 
   private handleLoginError(error: any): void {
-    console.error('Login error:', error);
     this.errorMessage = error.error?.message || 'Error al iniciar sesión. Por favor, intente nuevamente.';
     this.isLoading = false;
+    clearInterval(this.progressInterval);
   }
 
   private redirectBasedOnRole(): void {
@@ -134,10 +131,9 @@ export class LoginPage implements OnInit {
   private isTokenExpired(token: string): boolean {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp < Date.now() / 1000; // Verificar si el token ha expirado
-    } catch (error) {
-      console.error('Error al verificar el token:', error);
-      return true; // Si hay un error, considerar el token como expirado
+      return payload.exp < Date.now() / 1000;
+    } catch {
+      return true;
     }
   }
 }

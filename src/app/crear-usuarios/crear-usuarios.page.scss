@@ -204,4 +204,38 @@
   background: white;  /* Or your preferred background color */
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.737);
 }
- 
+button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  gap: 8px;  /* Espacio entre el ícono y el texto */
+}
+
+button:hover {
+  opacity: 0.8;  /* Efecto de hover */
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+

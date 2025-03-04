@@ -5,12 +5,23 @@
   <div class="position-fixed top-0 start-0 end-0 bg-white border-bottom z-3">
     <div class="d-flex justify-content-between align-items-center p-3">
       <h5 class="mb-0 fw-bold">Usuarios</h5>
-      <button class="btn btn-primary d-flex align-items-center shadow-sm px-3 py-2 rounded-pill" (click)="abrirModal()">
+    </div>
+    <div class="d-flex justify-content-between align-items-center p-3">
+      <button (click)="exportarAExcel()" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Exportar 
+      </button>
+      <button (click)="exportarAPDF()" class="btn btn-danger">
+        <i class="fas fa-file-pdf"></i> Exportar
+      </button>
+      
+      <button class="btn btn-primary " (click)="abrirModal()">
         <i class="bi bi-plus-lg fs-5 me-2"></i>
         <span class="fw-bold">Nuevo</span>
       </button>
-      
     </div>
+    
+    
+
     
     <!-- Barra de búsqueda -->
     <div class="px-3 pb-3">
@@ -29,7 +40,7 @@
   </div>
 
   <!-- Espacio para el header fijo -->
-  <div style="height: 150px;"></div>
+  <div style="height: 190px;"></div>
 
   <!-- Lista de usuarios -->
 
