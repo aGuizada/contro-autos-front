@@ -45,6 +45,13 @@
           <div class="scanned-info">
             {{ formatInformation(information) }}
           </div>
+          <div class="success-indicator mt-3">
+            <div class="text-center">
+              <ion-icon name="checkmark-circle" style="color: #28a745; font-size: 48px;"></ion-icon>
+              <p class="mt-2" style="color: #28a745; font-weight: bold;">QR Escaneado Correctamente</p>
+              <p class="small text-muted">El código QR se ha desactivado y se reactivará en 7 días</p>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <ion-button expand="block" (click)="closeModal()">

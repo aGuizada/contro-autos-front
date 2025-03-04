@@ -37,6 +37,9 @@
                 </p>
                 <span class="badge bg-success" *ngIf="registro.qrHabilitado">QR Activo</span>
                 <span class="badge bg-danger" *ngIf="!registro.qrHabilitado">QR Deshabilitado</span>
+                <p class="text-muted small mb-0 mt-1" *ngIf="!registro.qrHabilitado && registro.fecha_reactivacion">
+                  <i class="bi bi-arrow-clockwise"></i> Reactivación: {{ formatearFecha(registro.fecha_reactivacion) }}
+                </p>
               </div>
             </div>
           </div>

@@ -156,24 +156,39 @@ export class ServiciosService {
   marcarQRComoEscaneado(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/registros-carga/${id}/marcar-qr`, {});
   }
+
   saveQRScan(usuarioId: number): Observable<any> {
-    // Use toLocaleString() or a specific date formatting method
-    const formattedDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // Calcular fecha de próxima activación (7 días después)
+    const fechaActual = new Date();
+    const fechaReactivacion = new Date();
+    fechaReactivacion.setDate(fechaReactivacion.getDate() + 7);
+    
+    const formattedDate = fechaActual.toISOString().slice(0, 19).replace('T', ' ');
+    const formattedReactivacion = fechaReactivacion.toISOString().slice(0, 19).replace('T', ' ');
   
     return this.http.post(`${this.apiUrl}/registros-carga`, {
       usuario_id: usuarioId,
-      fecha_carga: formattedDate, // MySQL-compatible format
-      qrHabilitado: false
+      fecha_carga: formattedDate,
+      qrHabilitado: false,
+      fecha_reactivacion: formattedReactivacion
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
   }
-
-  // Method to check if QR is currently enabled for a user
+  
   checkQRStatus(usuarioId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/registros-carga/check-qr-status/${usuarioId}`, {
+    // Añadir un timestamp para evitar caché del navegador
+    const timestamp = new Date().getTime();
+    return this.http.get(`${this.apiUrl}/registros-carga/check-qr-status/${usuarioId}?t=${timestamp}`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
   }
   
+  getQRNextActivationDate(usuarioId: number): Observable<any> {
+    // Añadir un timestamp para evitar caché del navegador
+    const timestamp = new Date().getTime();
+    return this.http.get(`${this.apiUrl}/registros-carga/next-activation/${usuarioId}?t=${timestamp}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+  }
 }

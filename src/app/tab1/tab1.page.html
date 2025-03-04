@@ -1,4 +1,4 @@
-<ion-content>
+
   <div class="card-container">
     <div class="lanyard">
       <div class="lanyard-strap"></div>
@@ -16,23 +16,36 @@
               </div>
             </div>
           
+            <!-- Estado del QR (nuevo) -->
+            <div class="qr-status-indicator text-center mb-2">
+              <span class="badge" [ngClass]="usuarioSeleccionado.qrHabilitado ? 'bg-success' : 'bg-danger'">
+                {{ usuarioSeleccionado.qrHabilitado ? 'QR Activo' : 'QR Desactivado' }}
+              </span>
+            </div>
+          
             <!-- ✅ Mostrar el código QR solo si está habilitado -->
             <div class="text-center mt-1" *ngIf="usuarioSeleccionado.qrHabilitado">
               <p class="mb-1"><strong>QR Code:</strong></p>
               <qrcode 
-              [qrdata]="usuarioSeleccionado.qrData" 
-              [width]="256" 
-              [errorCorrectionLevel]="'M'"
-            ></qrcode>     </div>
+                [qrdata]="usuarioSeleccionado.qrData" 
+                [width]="256" 
+                [errorCorrectionLevel]="'M'"
+              ></qrcode>
+            </div>
           
             <!-- ✅ Mensaje cuando el QR está deshabilitado -->
             <div class="text-center mt-1 text-danger" *ngIf="!usuarioSeleccionado.qrHabilitado">
               <p class="mb-1"><strong>El código QR está deshabilitado</strong></p>
-              <p class="mb-1">Se activará nuevamente en 7 días.</p>
+              <p class="mb-1" *ngIf="diasRestantes > 0">Se activará nuevamente en {{ diasRestantes }} día(s).</p>
+              <p class="mb-1" *ngIf="diasRestantes <= 0">Se activará pronto. Por favor, espere un momento.</p>
+              <p class="mb-1 small text-muted" *ngIf="usuarioSeleccionado.fechaReactivacion">
+                Fecha de reactivación: {{ formatFechaReactivacion(usuarioSeleccionado.fechaReactivacion) }}
+              </p>
             </div>
           
             <!-- Mensaje de carga mientras se realiza la actualización -->
             <div *ngIf="loading" class="text-center mt-1">
+              <ion-spinner name="circular"></ion-spinner>
               <p class="mb-1">Cargando...</p>
             </div>
           
@@ -44,9 +57,6 @@
           
         </div>
       </div>
-      <button class="btn btn-primary mt-3" (click)="marcarQRComoEscaneado()">
-        Marcar como Escaneado
-      </button>
+   
     </div>
   </div>
-</ion-content>
