@@ -1,234 +1,338 @@
-/* cargar-qr.page.scss */
 :host {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  
-  ion-content {
-    --background: transparent;
-    --padding-start: 0;
-    --padding-end: 0;
-    --padding-top: 0;
-    --padding-bottom: 0;
-  }
-  
-  .scanner-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-  }
-  
-  .scanner-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    ::ng-deep video {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover;
-    }
-  }
-  
-  .scan-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-  }
-  
-  .scan-region {
-    width: 280px;
-    height: 280px;
-    position: relative;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    
-    .corner-tl, .corner-tr, .corner-bl, .corner-br {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #fff;
-    }
-    
-    .corner-tl {
-      top: -2px;
-      left: -2px;
-      border-right: 0;
-      border-bottom: 0;
-    }
-    
-    .corner-tr {
-      top: -2px;
-      right: -2px;
-      border-left: 0;
-      border-bottom: 0;
-    }
-    
-    .corner-bl {
-      bottom: -2px;
-      left: -2px;
-      border-right: 0;
-      border-top: 0;
-    }
-    
-    .corner-br {
-      bottom: -2px;
-      right: -2px;
-      border-left: 0;
-      border-top: 0;
-    }
-  
-    .scan-line {
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background: #00ff00;
-      top: 50%;
-      animation: scan 2s linear infinite;
-    }
-  }
-  
-  .controls-container {
-    position: fixed;
-    bottom: 32px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    z-index: 3;
-  }
-  
-  .result-overlay {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-    padding: 16px;
-    z-index: 4;
-  }
-  
-  .result-content {
-    color: white;
-    text-align: center;
-  }
-  
-  @keyframes scan {
-    0% {
-      transform: translateY(-100px);
-    }
-    100% {
-      transform: translateY(100px);
-    }
-  }
-  
-  /* Ajustes específicos para móviles */
-  @media (max-width: 768px) {
-    .scan-region {
-      width: 80vw;  /* 80% del ancho de la ventana */
-      height: 80vw; /* Mantener proporción cuadrada */
-      max-width: 280px;
-      max-height: 280px;
-    }
-  
-    .controls-container {
-      bottom: 50px; /* Un poco más arriba en móviles */
-    }
-  }
-  ion-app {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  ion-content {
-    --offset-top: 0 !important;
-    --offset-bottom: 0 !important;
-  }
-  /* Estilos previos se mantienen igual hasta la parte del modal */
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
+ion-content {
+  --background: #000;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  
+  --offset-top: 0 !important;
+  --offset-bottom: 0 !important;
+}
+
+/* Loading spinner */
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    color: #fff;
+  }
+  
+  p {
+    color: #fff;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+}
+
+/* Contenedor principal */
+.scanner-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  will-change: transform; /* Ayuda en el rendimiento */
+  
+  &.hidden {
+    display: none;
+  }
+}
+
+/* Scanner de ZXing */
+.scanner-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  contain: strict; /* Mejora rendimiento */
+  
+  ::ng-deep video {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform: translateZ(0); /* Hardware acceleration */
+  }
+}
+
+/* Overlay del escáner */
+.scan-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transform: translateZ(0); /* Hardware acceleration */
+}
+
+/* Región de escaneo */
+.scan-region {
+  width: 280px;
+  height: 280px;
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4);
+  
+  /* Esquinas */
+  .corner-tl, .corner-tr, .corner-bl, .corner-br {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #fff;
+  }
+  
+  .corner-tl {
+    top: -3px;
+    left: -3px;
+    border-right: none;
+    border-bottom: none;
+  }
+  
+  .corner-tr {
+    top: -3px;
+    right: -3px;
+    border-left: none;
+    border-bottom: none;
+  }
+  
+  .corner-bl {
+    bottom: -3px;
+    left: -3px;
+    border-right: none;
+    border-top: none;
+  }
+  
+  .corner-br {
+    bottom: -3px;
+    right: -3px;
+    border-left: none;
+    border-top: none;
+  }
+
+  /* Línea de escaneo */
+  .scan-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 255, 85, 0.8);
+    top: 50%;
+    animation: scan 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    box-shadow: 0 0 8px rgba(0, 255, 85, 0.8);
+    transform: translateZ(0); /* Hardware acceleration */
+  }
+}
+
+/* Contenedor de controles */
+.controls-container {
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  z-index: 3;
+  
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    height: 56px;
+    width: 56px;
+    --border-radius: 50%;
+    --background: rgba(0, 0, 0, 0.5);
+    --color: white;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+}
+
+/* Modal con resultado */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(5px); /* Efecto de blur mejorado */
+  transform: translateZ(0); /* Hardware acceleration */
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  animation: modalPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+
+  h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .close-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 36px;
+    margin: 0;
+    --color: #666;
+  }
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: white;
+
+  .scanned-info {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #333;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  
+  .success-indicator {
+    padding: 20px 0;
+    text-align: center;
+    
+    .success-icon {
+      font-size: 80px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    
+    .success-title {
+      color: #28a745;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+    
+    .success-message {
+      color: #666;
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+}
+
+.modal-footer {
+  padding: 16px 20px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+
+  ion-button {
+    margin: 0;
+    --background: #007bff;
+    --color: white;
+    --border-radius: 10px;
+    font-weight: 500;
+    font-size: 1rem;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+  }
+}
+
+/* Animación de la línea de escaneo */
+@keyframes scan {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100px);
+    opacity: 0.6;
+  }
+}
+
+/* Animación del modal */
+@keyframes modalPop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ajustes para móviles */
+@media (max-width: 768px) {
+  .scan-region {
+    width: 75vw;
+    height: 75vw;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .controls-container {
+    bottom: 32px;
   }
   
   .modal-content {
-    background-color: white;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    max-height: 80vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    max-width: 340px;
   }
-  
-  .modal-header {
-    padding: 16px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f8f9fa;
-  
-    h2 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #333;
-    }
-  
-    .close-button {
-      --padding-start: 4px;
-      --padding-end: 4px;
-      height: 36px;
-      margin: 0;
-    }
-  }
-  
-  .modal-body {
-    padding: 16px;
-    overflow-y: auto;
-    flex: 1;
-    background-color: white;
-  
-    .scanned-info {
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 1rem;
-      line-height: 1.5;
-      color: #333;
-    }
-  }
-  
-  .modal-footer {
-    padding: 16px;
-    border-top: 1px solid #ccc;
-    background-color: #f8f9fa;
-  
-    ion-button {
-      margin: 0;
-    }
-  }
+}
+
+/* Clase de utilidad */
+.text-center {
+  text-align: center;
+}
