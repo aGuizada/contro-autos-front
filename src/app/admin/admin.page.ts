@@ -9,9 +9,7 @@ import {
   IonMenuButton,
   IonTitle,
   IonToolbar,
-  IonList,
-  IonItem,
-  IonLabel,
+
   IonIcon,
   IonRouterOutlet,
   MenuController, // Importa MenuController
@@ -38,9 +36,7 @@ import { homeOutline, qrCodeOutline, peopleOutline, personAddOutline, barChartOu
     IonMenuButton,
     IonTitle,
     IonToolbar,
-    IonList,
-    IonItem,
-    IonLabel,
+   
     IonIcon,
     IonRouterOutlet,
   ],

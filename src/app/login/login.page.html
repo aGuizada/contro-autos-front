@@ -1,10 +1,11 @@
+<!-- login.page.html -->
 <ion-content>
 
-  <!-- Spinner de carga -->
+  <!-- Spinner de carga (Se muestra durante login normal o auto-login) -->
   <div *ngIf="isLoading" class="loading-overlay">
     <div class="loading-content">
       <img src="https://estaqueue.udpsa.com/img/LOGIN-AGENTE.png" alt="Logo" class="loading-logo">
-      <p>Iniciando sesión...</p>
+      <p>{{ isAutoLogin ? 'Iniciando sesión automáticamente...' : 'Iniciando sesión...' }}</p>
       <div class="progress-bar-container">
         <div class="progress-bar" [style.width.%]="progress"></div>
       </div>
@@ -12,8 +13,8 @@
     </div>
   </div>
 
-  <!-- Contenido del login (se oculta mientras isLoading = true) -->
-  <div *ngIf="!isLoading" class="container d-flex justify-content-center align-items-center min-vh-100">
+  <!-- Formulario de login (Solo se muestra si no hay auto-login) -->
+  <div *ngIf="!isLoading && !isAutoLogin" class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="row justify-content-center w-100">
       <div class="col-xl-10">
         <div class="split-container d-flex flex-column flex-md-row">

@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ServiciosService } from 'src/app/services/servicios.service';
+import { NetworkService } from '../services/network.service';
 @Component({
   selector: 'app-cargar-qr',
   templateUrl: './cargar-qr.page.html',
@@ -38,7 +39,7 @@ export class CargarQrPage implements OnInit {
     aspectRatio: 1.777778
   };
   
-  constructor(private serviciosService: ServiciosService ) {}
+  constructor(private serviciosService: ServiciosService, private networkService: NetworkService  ) {}
   
   ngOnInit() {}
   
@@ -113,8 +114,9 @@ export class CargarQrPage implements OnInit {
   scanSuccessHandler(resultString: string) {
     this.information = resultString;
     this.scannerEnabled = false; // Pausa el scanner mientras se muestra el modal
-    
-    // Obtener el ID de usuario del QR escaneado
+    this.scanSuccessful = true;
+  
+    // Procesar el QR escaneado
     this.procesarQREscaneado(resultString);
     
     // Vibración
@@ -128,15 +130,18 @@ export class CargarQrPage implements OnInit {
     
     // Espera a que termine el beep para reproducir el mensaje de voz
     audio.onended = () => {
-      // Mensaje de voz "Registrado correctamente"
-      const speech = new SpeechSynthesisUtterance('Registrado correctamente');
+      // Mensaje de voz
+      const mensaje = this.networkService.isOnline() 
+        ? 'Registrado correctamente' 
+        : 'Registrado correctamente en modo sin conexión';
+      
+      const speech = new SpeechSynthesisUtterance(mensaje);
       speech.lang = 'es-ES';
       speech.volume = 1;
       speech.rate = 1;
       window.speechSynthesis.speak(speech);
     };
   }
-  
   procesarQREscaneado(qrData: string) {
     // Intentar extraer el ID de usuario del contenido del QR
     // Asumimos que el QR tiene un formato como: "Nombre: Juan\nEmail: juan@example.com\n..."
@@ -156,11 +161,33 @@ export class CargarQrPage implements OnInit {
       this.buscarUsuarioPorEmailYDesactivarQR(usuarioEmail);
     }
   }
-  
   buscarUsuarioPorEmailYDesactivarQR(email: string) {
-    // Obtener la lista de usuarios para encontrar el ID correspondiente al email
+    // Si estamos offline, intentar buscar en caché local
+    if (!this.networkService.isOnline()) {
+      const cachedUsers = JSON.parse(localStorage.getItem('cached_users') || '[]');
+      const usuario = cachedUsers.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+      
+      if (usuario && usuario.id) {
+        // Desactivar el QR en modo offline
+        this.serviciosService.saveQRScan(usuario.id).subscribe(
+          () => {
+            console.log('QR guardado en modo offline');
+            this.scanSuccessful = true;
+          },
+          (error) => {
+            console.error('Error al guardar QR offline:', error);
+          }
+        );
+        return;
+      }
+    }
+    
+    // Modo online o usuario no encontrado en caché
     this.serviciosService.getUsuarios().subscribe(
       (usuarios: any[]) => {
+        // Guardar usuarios en caché para uso offline
+        localStorage.setItem('cached_users', JSON.stringify(usuarios));
+        
         const usuario = usuarios.find(u => u.email?.toLowerCase() === email.toLowerCase());
         
         if (usuario && usuario.id) {
@@ -170,11 +197,10 @@ export class CargarQrPage implements OnInit {
           this.serviciosService.saveQRScan(usuario.id).subscribe(
             (response) => {
               console.log('QR desactivado correctamente:', response);
-              this.scanSuccessful = true; // Marcar como exitoso para mostrar el indicador
+              this.scanSuccessful = true;
             },
             (error) => {
               console.error('Error al desactivar QR:', error);
-              // Aquí puedes mostrar un mensaje de error
             }
           );
         } else {
